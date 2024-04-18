@@ -16,7 +16,7 @@ import {
 })
 @Index(['id', 'userId'])
 export class Pet{
-  @PrimaryGeneratedColumn({ unsigned: true })
+    @PrimaryGeneratedColumn({ unsigned: true })
     id: number;
 
     //RFID_CD번호
@@ -60,6 +60,6 @@ export class Pet{
     @DeleteDateColumn()
     deletedAt?: Date;
 
-    @ManyToOne(() => User, (users) => users.pet, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+    @ManyToOne(() => User, (user) => user.pet)
     user: User;
 }
