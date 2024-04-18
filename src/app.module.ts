@@ -14,6 +14,7 @@ import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { Pet } from './pet/entities/pet.entity';
 import { PetModule } from './pet/pet.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -54,6 +55,7 @@ const typeOrmModuleOptions = {
     }),
     PostModule,
     UserModule,
+    UploadsModule
   ],
   controllers: [AppController],
   providers: [AppService, AuthMiddleware],
