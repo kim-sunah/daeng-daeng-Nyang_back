@@ -60,6 +60,7 @@ export class Pet{
     @DeleteDateColumn()
     deletedAt?: Date;
 
-    @ManyToOne(() => User, (user) => user.pet)
+    @ManyToOne(() => User, (user) => user.pets,{ onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+    @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
     user: User;
 }

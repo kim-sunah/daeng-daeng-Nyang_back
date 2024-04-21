@@ -16,6 +16,8 @@ import { UploadsModule } from './uploads/uploads.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtStrategy } from './auth/jwt.strategy';
 import { AppService } from './app.service';
+import { MessageModule } from './message/message.module';
+import { Upload } from './uploads/entities/upload.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -27,7 +29,7 @@ const typeOrmModuleOptions = {
     username: configService.get('DB_USERNAME'),
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
-    entities: [Post, User, Pet],
+    entities: [Post, User, Pet,Upload],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -62,7 +64,9 @@ const typeOrmModuleOptions = {
     PostModule,
     UserModule,
     UploadsModule,
-    AuthModule
+    AuthModule,
+    MessageModule,
+    UploadsModule
   ],
   controllers: [AppController],
   providers: [JwtStrategy,AppService],

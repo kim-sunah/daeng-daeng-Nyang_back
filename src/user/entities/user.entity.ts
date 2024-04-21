@@ -4,6 +4,7 @@ import {
 } from 'typeorm';
 import { Pet } from '../../pet/entities/pet.entity';
 import { Role } from '../types/userRole.type';
+import { Post } from 'src/post/entities/post.entity';
 
 @Index('email', ['email'], { unique: true })
 @Entity({
@@ -36,5 +37,8 @@ export class User {
   deletedAt?: Date;
 
   @OneToMany(type => Pet , (pet) => pet.user)
-  pet : Pet[]
+  pets : Pet[]
+
+  @OneToMany(() => Post, (posts) => posts.userId)
+  posts: Post[];
 }
