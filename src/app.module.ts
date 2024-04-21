@@ -1,20 +1,21 @@
 import Joi from 'joi';
 
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthMiddleware } from './auth/auth.middleware';
 import { Post } from './post/entities/post.entity';
 import { PostModule } from './post/post.module';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { Pet } from './pet/entities/pet.entity';
-import { PetModule } from './pet/pet.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtStrategy } from './auth/jwt.strategy';
+import { AppService } from './app.service';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -53,17 +54,18 @@ const typeOrmModuleOptions = {
       }),
       inject: [ConfigService],
     }),
+    CacheModule.register({
+      ttl: 600000, // 데이터 캐싱 시간(밀리 초 단위, 1000 = 1초)
+      max: 100, // 최대 캐싱 개수
+      isGlobal: true,
+    }),
     PostModule,
     UserModule,
-    UploadsModule
+    UploadsModule,
+    AuthModule
   ],
   controllers: [AppController],
-  providers: [AppService, AuthMiddleware],
+  providers: [JwtStrategy,AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware) // 미들웨어 적용!
-      .forRoutes({ path: 'user/check', method: RequestMethod.GET }); // user/check 엔드포인트에만 적용
-  }
-}
+
+export class AppModule {}

@@ -1,71 +1,56 @@
+import { compare, hash } from 'bcrypt';
 import _ from 'lodash';
 import { Repository } from 'typeorm';
 
-import {
-  ConflictException, Injectable, NotFoundException, UnauthorizedException
-} from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
-    private jwtService: JwtService, // JWT 토큰 생성을 위해 주입한 서비스
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async login(loginUserDto: LoginUserDto) {
-    const { email, password } = loginUserDto;
-
-    const user = await this.userRepository.findOne({
-      where: { email, deletedAt: null },
-      select: ['id', 'password'],
-    });
-
-    if (_.isNil(user)) {
-      throw new NotFoundException(`유저를 찾을 수 없습니다. ID: ${email}`);
-    }
-
-    if (user.password !== password) {
-      throw new UnauthorizedException(
-        `유저의 비밀번호가 올바르지 않습니다. ID: ${email}`,
-      );
-    }
-
-    // 추가된 코드 - JWT 토큰 생성
-    const payload = { id: user.id };
-    const accessToken = await this.jwtService.signAsync(payload);
-    return accessToken;
-  }
-
-  async create(createUserDto: CreateUserDto) {
-    const existUser = await this.findOne(createUserDto.email);
-    if (!_.isNil(existUser)) {
+  async register(email: string, password: string) {
+    const existingUser = await this.findByEmail(email);
+    if (existingUser) {
       throw new ConflictException(
-        `이미 가입된 ID입니다. ID: ${createUserDto.email}`,
+        '이미 해당 이메일로 가입된 사용자가 있습니다!',
       );
     }
 
-    const newUser = await this.userRepository.save(createUserDto);
-
-    // 추가된 코드 - JWT 토큰 생성
-    const payload = { id: newUser.id };
-    const accessToken = await this.jwtService.signAsync(payload);
-    return accessToken;
-  }
-
-  checkUser(userPayload: any) {
-    return `유저 정보: ${JSON.stringify(userPayload)}}`;
-  }
-
-  private async findOne(email: string) {
-    return await this.userRepository.findOne({
-      where: { email, deletedAt: null },
-      select: ['email', 'createdAt', 'updatedAt'],
+    const hashedPassword = await hash(password, 10);
+    await this.userRepository.save({
+      email,
+      password: hashedPassword,
     });
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.userRepository.findOne({
+      select: ['id', 'email', 'password'],
+      where: { email },
+    });
+    if (_.isNil(user)) {
+      throw new UnauthorizedException('이메일을 확인해주세요.');
+    }
+
+    if (!(await compare(password, user.password))) {
+      throw new UnauthorizedException('비밀번호를 확인해주세요.');
+    }
+
+    const payload = { email, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async findByEmail(email: string) {
+    return await this.userRepository.findOneBy({ email });
   }
 }

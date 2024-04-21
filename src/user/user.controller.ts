@@ -1,26 +1,29 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
+import { LoginDto } from './dto/login.dto';
 import { UserService } from './user.service';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from './entities/user.entity';
+import { UserInfo } from 'src/auth/utils/userInfo.decorator';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('/login')
-  async login(@Body() loginUserDTO: LoginUserDto) {
-    return await this.userService.login(loginUserDTO);
+  @Post('login')
+  async login(@Body() loginDto: LoginDto) {
+    return await this.userService.login(loginDto.email, loginDto.password);
   }
 
-  @Post('/signup')
-  async createUser(@Body() createUserDTO: CreateUserDto) {
-    return await this.userService.create(createUserDTO);
+  @Post('register')
+  async register(@Body() loginDto: LoginDto) {
+    return await this.userService.register(loginDto.email, loginDto.password);
   }
-
-  @Get('/check')
-  checkUser(@Req() req: any) {
-    const userPayload = req.user;
-    return this.userService.checkUser(userPayload);
+  
+  @UseGuards(AuthGuard('jwt'))
+  @Get('email')
+  getEmail(@UserInfo() user: User) {
+    return { email: user.email };
   }
 }
