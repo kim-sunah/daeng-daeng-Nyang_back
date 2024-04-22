@@ -18,7 +18,7 @@ export class User {
   @Column('varchar', { length: 20, nullable: false })
   name: string;
 
-  @Column({ type: 'varchar', unique: true, nullable: false })
+  @Column({nullable: false} )
   email: string;
 
   @Column({ type: 'varchar', select: false, nullable: false })
@@ -35,6 +35,10 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  //간편로그인
+  @Column()
+  registration_information: string;
 
   @OneToMany(type => Pet , (pet) => pet.user)
   pets : Pet[]

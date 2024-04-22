@@ -14,7 +14,6 @@ import { UserModule } from './user/user.module';
 import { Pet } from './pet/entities/pet.entity';
 import { UploadsModule } from './uploads/uploads.module';
 import { AuthModule } from './auth/auth.module';
-import { JwtStrategy } from './auth/jwt.strategy';
 import { AppService } from './app.service';
 import { MessageModule } from './message/message.module';
 import { Upload } from './uploads/entities/upload.entity';
@@ -69,7 +68,7 @@ const typeOrmModuleOptions = {
     UploadsModule
   ],
   controllers: [AppController],
-  providers: [JwtStrategy,AppService],
+  providers: [AppService],
 })
 
 export class AppModule {}

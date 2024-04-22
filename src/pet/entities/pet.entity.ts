@@ -26,6 +26,9 @@ export class Pet{
     @Column('int', { unsigned: true })
     userId: number;
 
+    @Column('varchar', { length: 100, nullable: false  })
+    profileImage: string;
+
     //동물등록번호
     @Column()
     dogRegNo : String;

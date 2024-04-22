@@ -9,7 +9,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreatePostDto } from './dto/create-post.dto';
-import { RemovePostDTO } from './dto/remove-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
 
@@ -54,7 +53,7 @@ export class PostService {
       throw new BadRequestException('게시물 ID가 잘못되었습니다.');
     }
 
-    const { content, password } = updatePostDto;
+    const { content } = updatePostDto;
     const post = await this.postRepository.findOne({
       select: ['password'],
       where: { id },
@@ -62,21 +61,15 @@ export class PostService {
 
     if (_.isNil(post)) {
       throw new NotFoundException('게시물을 찾을 수 없습니다.');
-    }
-
-    if (!_.isNil(post.password) && post.password !== password) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
     }
 
     await this.postRepository.update({ id }, { content });
   }
 
-  async remove(id: number, removePostDto: RemovePostDTO) {
+  async remove(id: number) {
     if (_.isNaN(id)) {
       throw new BadRequestException('게시물 ID가 잘못되었습니다.');
     }
-
-    const { password } = removePostDto;
 
     const post = await this.postRepository.findOne({
       select: ['password'],
@@ -87,9 +80,6 @@ export class PostService {
       throw new NotFoundException('게시물을 찾을 수 없습니다.');
     }
 
-    if (!_.isNil(post.password) && post.password !== password) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
-    }
 
     await this.postRepository.softDelete({ id });
   }

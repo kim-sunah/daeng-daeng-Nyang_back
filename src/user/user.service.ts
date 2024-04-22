@@ -1,56 +1,59 @@
-import { compare, hash } from 'bcrypt';
-import _ from 'lodash';
-import { Repository } from 'typeorm';
-
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { UpdateuserDto } from './dto/update-user.dto';
+import { Post } from '../post/entities/post.entity';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { ConfigService } from '@nestjs/config';
+import { basename, extname } from 'path';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private readonly jwtService: JwtService,
-  ) {}
-
-  async register(email: string, password: string) {
-    const existingUser = await this.findByEmail(email);
-    if (existingUser) {
-      throw new ConflictException(
-        '이미 해당 이메일로 가입된 사용자가 있습니다!',
-      );
-    }
-
-    const hashedPassword = await hash(password, 10);
-    await this.userRepository.save({
-      email,
-      password: hashedPassword,
+    constructor(
+        @InjectRepository(User) private readonly userRepository: Repository<User>,
+        @InjectRepository(Post) private readonly postRepository: Repository<Post>,
+        private readonly configService: ConfigService,
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
+    ) {}
+    private readonly s3Client = new S3Client({
+        region: this.configService.getOrThrow('S3_REGION'),
+        credentials: {
+            accessKeyId: process.env.AWS_S3_accessKeyId,
+            secretAccessKey: process.env.AWS_S3_secretAccessKey,
+        },
     });
-  }
 
-  async login(email: string, password: string) {
-    const user = await this.userRepository.findOne({
-      select: ['id', 'email', 'password'],
-      where: { email },
-    });
-    if (_.isNil(user)) {
-      throw new UnauthorizedException('이메일을 확인해주세요.');
+    async getUserInfo(id: number) {
+        const user = await this.userRepository.findOneBy({ id });
+
+        if (!user) {
+            throw new NotFoundException('사용자를 찾을 수 없습니다.');
+        }
+
+        return user;
     }
 
-    if (!(await compare(password, user.password))) {
-      throw new UnauthorizedException('비밀번호를 확인해주세요.');
+    async getHostInfo(id: number) {
+        const host = await this.userRepository.findOneBy({ id });
+
+        if (!host) {
+            throw new NotFoundException('트레이너 정보를 찾을 수 없습니다.');
+        }
+
+        return host;
     }
 
-    const payload = { email, sub: user.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
-  }
+    async updateUserinfo(id: number, updateUser: UpdateuserDto) {
+        const hashedPassword = await bcrypt.hashSync(updateUser.Password, 12);
+        return await this.userRepository.update(id, { email: updateUser.Email, password: hashedPassword });
+    }
 
-  async findByEmail(email: string) {
-    return await this.userRepository.findOneBy({ email });
-  }
+    async Allproduct(id: number) {
+        const productlist = await this.postRepository.find({ where: { userId: id } });
+        return productlist;
+    }
 }

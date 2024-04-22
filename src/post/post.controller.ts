@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 
 import { CreatePostDto } from './dto/create-post.dto';
-import { RemovePostDTO } from './dto/remove-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostService } from './post.service';
 
@@ -38,7 +37,7 @@ export class PostController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Body() deletePostDto: RemovePostDTO) {
-    return this.postService.remove(+id, deletePostDto);
+  remove(@Param('id') id: string) {
+    return this.postService.remove(+id);
   }
 }
