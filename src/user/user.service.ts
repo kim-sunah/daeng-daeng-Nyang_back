@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable, NotFoundException } from '@nes
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { UpdateuserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { Post } from '../post/entities/post.entity';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
@@ -47,13 +47,13 @@ export class UserService {
         return host;
     }
 
-    async updateUserinfo(id: number, updateUser: UpdateuserDto) {
+    async updateUserinfo(id: number, updateUser: UpdateUserDto) {
         const hashedPassword = await bcrypt.hashSync(updateUser.Password, 12);
         return await this.userRepository.update(id, { email: updateUser.Email, password: hashedPassword });
     }
 
     async Allproduct(id: number) {
-        const productlist = await this.postRepository.find({ where: { userId: id } });
-        return productlist;
+        const postList = await this.postRepository.find({ where: { userId: id } });
+        return postList;
     }
 }

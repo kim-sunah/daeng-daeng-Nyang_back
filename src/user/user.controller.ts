@@ -5,20 +5,14 @@ import {
   HttpStatus,
   Param,
   Post,
-  Put,
-  Request,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 
-import { AuthGuard } from '@nestjs/passport';
 import { UserInfo } from 'src/auth/decorators/userinfo.decorator';
 import { User } from './entities/user.entity';
-import { UpdateuserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guards';
-import { FileInterceptor } from '@nestjs/platform-express';
 
 // @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -50,7 +44,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Post('MypageUpdate')
-  async updateUserinfo(@UserInfo() userinfo: User, @Body() updateUser: UpdateuserDto) {
+  async updateUserinfo(@UserInfo() userinfo: User, @Body() updateUser: UpdateUserDto) {
       const updateuser = await this.userService.updateUserinfo(userinfo.id, updateUser);
 
       return {
