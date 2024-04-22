@@ -1,10 +1,11 @@
 import { IsString } from 'class-validator';
 import {
-  Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn,OneToMany, Index
+  Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn,OneToMany, Index, Relation
 } from 'typeorm';
 import { Pet } from '../../pet/entities/pet.entity';
 import { Role } from '../types/userRole.type';
 import { Post } from 'src/post/entities/post.entity';
+import { Message } from 'src/message/entities/message.entity';
 
 @Index('email', ['email'], { unique: true })
 @Entity({
@@ -45,4 +46,10 @@ export class User {
 
   @OneToMany(() => Post, (posts) => posts.userId)
   posts: Post[];
+
+  @OneToMany(() => Message, (message) => message.host)
+  host_message: Relation<Message>[];
+
+  @OneToMany(() => Message, (message) => message.gest)
+  gest_message: Relation<Message>[];
 }

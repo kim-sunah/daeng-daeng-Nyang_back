@@ -12,8 +12,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from './guard/jwt-auth.guards';
 import { MessageModule } from 'src/message/message.module';
 import { MessageService } from 'src/message/message.service';
-import { Message } from '../message/entities/message.entity';
 import { EventsModule } from 'src/events/events.module';
+import { Message } from 'src/message/entities/message.entity';
 
 @Module({
   imports: [
