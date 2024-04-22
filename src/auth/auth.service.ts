@@ -257,7 +257,7 @@ export class AuthService {
     this.mailerService
       .sendMail({
         to: email,
-        from: 'chlxodud04@naver.com',
+        from: '1004_sunah@naver.com',
         subject: '이메일 인증번호',
         html: `<b>${sixDigitNumber}</b>`,
       })
