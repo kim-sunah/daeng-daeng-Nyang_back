@@ -17,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
 import { AppService } from './app.service';
 import { MessageModule } from './message/message.module';
 import { Upload } from './uploads/entities/upload.entity';
+import { Message } from './message/entities/message.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -28,7 +29,7 @@ const typeOrmModuleOptions = {
     username: configService.get('DB_USERNAME'),
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
-    entities: [Post, User, Pet,Upload],
+    entities: [Post, User, Pet,Upload, Message],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
