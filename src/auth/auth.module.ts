@@ -30,12 +30,12 @@ import { Message } from 'src/message/entities/message.entity';
         host: 'smtp.naver.com',
         port: 465,
         auth: {
-          user: 'chlxodud04@naver.com',
-          pass: 'military22',
+          user: '1004_sunah@naver.com',
+          pass: 'sunah1004',
         },
       },
       defaults: {
-        from: '"nest-modules" <chlxodud04@naver.com>',
+        from: '"nest-modules" <1004_sunah@naver.com>',
       },
       template: {
         dir: __dirname + '/templates',
