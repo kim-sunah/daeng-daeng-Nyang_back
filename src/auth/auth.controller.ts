@@ -13,13 +13,11 @@ import { googleLoginDto } from './dtos/google-user.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly messageService: MessageService
-  ) {}
+  constructor(private readonly authService: AuthService,private readonly messageService: MessageService) {}
 
   @Post('/signup')
   async signUp(@Body() createuserDto: CreateuserDto) {
+    
     const user = await this.authService.signUp(createuserDto);
 
     return {
