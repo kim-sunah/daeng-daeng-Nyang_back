@@ -71,13 +71,17 @@ export class AuthService {
 
   async signIn({ Email, Password }: SignInDto) {
     const user = await this.userRepository.findOne({ where: { email: Email } });
+    
 
     if (!user) {
       throw new BadRequestException(['This Email does not exist.']);
     }
+    console.log(user);
     if (!(await bcrypt.compare(Password, user.password))) {
-      throw new BadRequestException(['A password that does not exist.']);
-    }
+      
+      throw new UnauthorizedException('Invalid password.');
+  }
+    
     const accessToken = await this.createAccessToken(+user.id);
     const refreshToken = await this.createRefreshToken();
     return { accessToken, refreshToken };
@@ -232,16 +236,20 @@ export class AuthService {
     return await this.jwtService.signAsync({}, { expiresIn: '7d' });
   }
 
-  async verifyAccessToken(accessToken: string) {
+  async verifyAccessToken(access_token: string) {
+
     try {
-      const payload = await this.jwtService.verify(accessToken);
+      const payload = await this.jwtService.verify(access_token);
+  
       return { success: true, id: payload.id };
     } catch (error) {
-      const payload = await this.jwtService.verify(accessToken, {
+      const payload = await this.jwtService.verify(access_token, {
         ignoreExpiration: true,
       });
+   
       return { success: false, message: error.message, id: payload.id };
     }
+    
   }
   async verifyRefreshToken(refreshToken: string) {
     try {

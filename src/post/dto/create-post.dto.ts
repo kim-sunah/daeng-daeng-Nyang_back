@@ -9,8 +9,10 @@ export class CreatePostDto {
   @IsNotEmpty({ message: '게시물의 내용을 입력해주세요.' })
   readonly content: string;
 
-  @IsString()
-  @IsNotEmpty({ message: '썸네일 이미지를 등록해주세요.' })
+  // @IsString()
+  // @IsNotEmpty({ message: '썸네일 이미지를 등록해주세요.' })
   readonly thumbnail: string;
+
+ 
 
 }

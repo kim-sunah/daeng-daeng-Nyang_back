@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateuserDto } from './dtos/create-user.dto';
@@ -10,6 +12,7 @@ import { SignInDto } from './dtos/sign-in.dto';
 import { KakaoLoginDto } from './dtos/kakao-user.dto';
 import { MessageService } from 'src/message/message.service';
 import { googleLoginDto } from './dtos/google-user.dto';
+import { JwtAuthGuard } from './guard/jwt-auth.guards';
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +20,7 @@ export class AuthController {
 
   @Post('/signup')
   async signUp(@Body() createuserDto: CreateuserDto) {
-    
+    console.log
     const user = await this.authService.signUp(createuserDto);
 
     return {
@@ -29,8 +32,7 @@ export class AuthController {
 
   @Post('/sign-in')
   async signIn(@Body() signInDto: SignInDto) {
-    const { accessToken, refreshToken } =
-      await this.authService.signIn(signInDto);
+    const { accessToken, refreshToken } =await this.authService.signIn(signInDto);
     return {
       statusCode: HttpStatus.OK,
       message: '로그인에 성공했습니다.',
@@ -114,4 +116,5 @@ export class AuthController {
       refreshToken,
     };
   }
+
 }

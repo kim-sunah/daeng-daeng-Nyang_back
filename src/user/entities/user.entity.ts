@@ -15,14 +15,13 @@ export class User {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @IsString()
   @Column('varchar', { length: 20, nullable: false })
   name: string;
 
   @Column({nullable: false} )
   email: string;
 
-  @Column({ type: 'varchar', select: false, nullable: false })
+  @Column({ type: 'varchar', nullable: false })
   password: string;
 
   @Column({ type: 'enum', enum: Role, default: Role.User })

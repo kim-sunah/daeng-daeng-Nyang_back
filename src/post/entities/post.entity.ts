@@ -36,10 +36,6 @@ export class Post {
   @Column('varchar', { length: 1000, nullable: false })
   content: string;
 
-  @IsNumber()
-  @Column('int', { select: false, nullable: false })
-  password: number;
-
   @CreateDateColumn()
   createdAt: Date;
 

@@ -45,7 +45,8 @@ import { Message } from 'src/message/entities/message.entity';
         },
       },
     }),
-    EventsModule, // 여기에 추가
+    EventsModule, 
+
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard, MessageService],

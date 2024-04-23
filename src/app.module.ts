@@ -18,6 +18,7 @@ import { AppService } from './app.service';
 import { MessageModule } from './message/message.module';
 import { Upload } from './uploads/entities/upload.entity';
 import { Message } from './message/entities/message.entity';
+import { JwtAuthGuard } from './auth/guard/jwt-auth.guards';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -66,7 +67,8 @@ const typeOrmModuleOptions = {
     UploadsModule,
     AuthModule,
     MessageModule,
-    UploadsModule
+    UploadsModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService],
