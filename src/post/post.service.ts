@@ -11,13 +11,37 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
+import { basename, extname } from 'path';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PostService {
-  constructor(@InjectRepository(Post) private postRepository: Repository<Post>,@Inject(CACHE_MANAGER) private cacheManager: Cache,) {}
+  constructor(@InjectRepository(Post) private postRepository: Repository<Post>,@Inject(CACHE_MANAGER) private cacheManager: Cache, private readonly configService: ConfigService) {}
 
-  async create(createPostDto: CreatePostDto , userId : number) {
-    return (await this.postRepository.save({userId : userId, title : createPostDto.title, content : createPostDto.content}));
+  private readonly s3Client = new S3Client({
+    region: this.configService.getOrThrow('AWS_REGION'),
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_KEY,
+    },
+});
+
+  async create(filename : string, file :Buffer, title: string, content : string , userId : number) {
+    const ext = extname(filename);
+    const baseName = basename(filename,ext);
+    const filenames = `images/${baseName}-${Date.now()}${ext}`
+    console.log(filename)
+    try{
+   
+      await this.s3Client.send(new PutObjectCommand({Bucket : "sunah" , Key : filenames, Body:file}))
+      await this.postRepository.save({userId:userId, thumbnail:filenames, title:title, content: content})
+      console.log("upload image")
+    }
+    catch(err){
+      console.log("Error")
+    }
+    // return (await this.postRepository.save({userId : userId, title : title, content : content}));
   }
 
   async findAll() {

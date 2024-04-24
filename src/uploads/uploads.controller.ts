@@ -11,8 +11,8 @@ export class UploadsController {
   @Post('')
   @UseInterceptors(AnyFilesInterceptor())
   async uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {
-    console.log("files: " + files)
     files.map((item) => {
+      console.log("files: " + item)
       return this.uploadsService.uploadImage(item.originalname, item.buffer);
     })
   }

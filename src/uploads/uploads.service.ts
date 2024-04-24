@@ -4,20 +4,22 @@ import { UpdateUploadDto } from './dto/update-upload.dto';
 import * as AWS from 'aws-sdk';
 import { basename, extname } from 'path';
 import {S3Client, PutObjectCommand} from "@aws-sdk/client-s3"
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UploadsService {
-  private readonly s3;
+ 
 
-  constructor() {
-    
-   
-  }
+  constructor(private readonly configService: ConfigService) {}
 
-  private readonly s3Client = new S3Client({region : "ap-northeast-2", credentials:{
-    accessKeyId : process.env.AWS_ACCESS_KEY_ID
-    , secretAccessKey : process.env.AWS_SECRET_ACCESS_KEY
-  }})
+  private readonly s3Client = new S3Client({
+    region: this.configService.getOrThrow('AWS_REGION'),
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_KEY,
+    },
+});
+
 
   async uploadImage(filename : string, file :Buffer) {
     const ext = extname(filename);
@@ -28,7 +30,7 @@ export class UploadsService {
     console.log(filenames)
 
     try{
-      await this.s3Client.send(new PutObjectCommand({Bucket : "sunas" , Key : filenames, Body:file}))
+      await this.s3Client.send(new PutObjectCommand({Bucket : "sunah" , Key : filenames, Body:file}))
       console.log("upload image")
     }
     catch(err){

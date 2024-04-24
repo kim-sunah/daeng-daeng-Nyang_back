@@ -9,19 +9,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
     async canActivate(context: ExecutionContext) {
         try{
-
             const req = context.switchToHttp().getRequest();
             const accessToken = req.headers.authorization.split(' ')[1];
             const refreshToken = req.headers.refreshtoken;
-          
-            
             if (!accessToken || !refreshToken) {
                 throw new UnauthorizedException('접근할 수 없습니다.');
             }
-       
-    
             // access token 검증
-           
             const isVerifiedAccessToken = await this.authService.verifyAccessToken(accessToken);
             const id = isVerifiedAccessToken.id;
     

@@ -21,19 +21,20 @@ import {
 export class Post {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
-
-  @Column('int', { unsigned: true })
+  
+  @IsNumber()
+  @Column({ unsigned: true })
   userId: number;
 
   @Column({ default: 'https://lsh318204.cafe24.com/wp-content/uploads/kboard_attached/8/201906/5cf728d931fab7574308-600x338.jpg' })
   thumbnail: string;
 
   @IsString()
-  @Column('varchar', { length: 50, nullable: false })
+  @Column({ length: 50, nullable: false })
   title: string;
 
   @IsString()
-  @Column('varchar', { length: 1000, nullable: false })
+  @Column({ length: 1000, nullable: false })
   content: string;
 
   @CreateDateColumn()

@@ -11,13 +11,13 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.enableCors({
-    origin: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders:
-      'Content-Type, Accept , Authorization , X-XSRF-TOKEN , refreshtoken',
-    credentials: true,
-  });
+  // app.enableCors({
+  //   origin: true,
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   allowedHeaders:
+  //     'Content-Type, Accept , Authorization , X-XSRF-TOKEN , refreshtoken',
+  //   credentials: true,
+  // });
 
 
   await app.listen(3000);

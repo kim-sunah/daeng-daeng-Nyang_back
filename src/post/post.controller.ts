@@ -8,7 +8,9 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import { CreatePostDto } from './dto/create-post.dto';
@@ -18,6 +20,7 @@ import { JwtAuthGuard } from '../auth/guard/jwt-auth.guards';
 import { Request } from 'express';
 import { UserInfo } from 'src/auth/decorators/userinfo.decorator';
 import { User } from 'src/user/entities/user.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('post')
 
 export class PostController {
@@ -25,9 +28,12 @@ export class PostController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Body() createPostDto: CreatePostDto, @UserInfo() userinfo: User) {
-    return this.postService.create(createPostDto,userinfo.id);
+  @UseInterceptors(FileInterceptor('thumbnail'))
+  create(@UploadedFile() file: Express.Multer.File, @Body("title") title: string, @Body("content") content : string, @UserInfo() userinfo: User) {
+   console.log(file)
+    return this.postService.create(file.originalname, file.buffer, title ,content, +userinfo.id);
   }
+
 
   @Get()
   findAll() {

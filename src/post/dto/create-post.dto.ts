@@ -11,7 +11,7 @@ export class CreatePostDto {
 
   // @IsString()
   // @IsNotEmpty({ message: '썸네일 이미지를 등록해주세요.' })
-  readonly thumbnail: string;
+  // readonly thumbnail: string;
 
  
 
