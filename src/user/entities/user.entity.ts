@@ -6,6 +6,7 @@ import { Pet } from '../../pet/entities/pet.entity';
 import { Role } from '../types/userRole.type';
 import { Post } from 'src/post/entities/post.entity';
 import { Message } from 'src/message/entities/message.entity';
+import { Schedule } from '../../schedule/entities/schedule.entity';
 
 @Index('email', ['email'], { unique: true })
 @Entity({
@@ -45,6 +46,9 @@ export class User {
 
   @OneToMany(() => Post, (posts) => posts.userId)
   posts: Post[];
+  
+  @OneToMany(() => Schedule, (schedule) => schedule.userId)
+  schedule: Schedule[];
 
   @OneToMany(() => Message, (message) => message.host)
   host_message: Relation<Message>[];

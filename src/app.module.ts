@@ -19,6 +19,8 @@ import { MessageModule } from './message/message.module';
 import { Upload } from './uploads/entities/upload.entity';
 import { Message } from './message/entities/message.entity';
 import { JwtAuthGuard } from './auth/guard/jwt-auth.guards';
+import { ScheduleModule } from './schedule/schedule.module';
+import { Schedule } from './schedule/entities/schedule.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -30,7 +32,7 @@ const typeOrmModuleOptions = {
     username: configService.get('DB_USERNAME'),
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
-    entities: [Post, User, Pet,Upload, Message],
+    entities: [Post, User, Pet,Upload, Message, Schedule],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -68,6 +70,7 @@ const typeOrmModuleOptions = {
     AuthModule,
     MessageModule,
     UploadsModule,
+    ScheduleModule,
     
   ],
   controllers: [AppController],
