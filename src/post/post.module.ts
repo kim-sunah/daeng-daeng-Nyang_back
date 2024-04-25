@@ -10,10 +10,11 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthModule } from 'src/auth/auth.module';
+import { Schedule } from 'src/schedule/entities/schedule.entity';
 
 @Module({
 
-  imports: [TypeOrmModule.forFeature([Post,User]) , AuthModule],
+  imports: [TypeOrmModule.forFeature([Post,User, Schedule]) , AuthModule],
   controllers: [PostController],
   providers: [PostService],
 })

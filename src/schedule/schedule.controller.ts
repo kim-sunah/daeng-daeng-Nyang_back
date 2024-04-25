@@ -29,12 +29,15 @@ export class ScheduleController {
   // }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updateScheduleDto: UpdateScheduleDto,@UserInfo() userinfo: User) {
     return this.scheduleService.update(+id, updateScheduleDto, +userinfo.id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.scheduleService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  remove(@Param('id') id: string, @UserInfo() userinfo: User) {
+    console.log(userinfo.id)
+    return this.scheduleService.remove(+id, userinfo.id);
   }
 }

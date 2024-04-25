@@ -21,6 +21,7 @@ import { Message } from './message/entities/message.entity';
 import { JwtAuthGuard } from './auth/guard/jwt-auth.guards';
 import { ScheduleModule } from './schedule/schedule.module';
 import { Schedule } from './schedule/entities/schedule.entity';
+import { PetModule } from './pet/pet.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -67,6 +68,7 @@ const typeOrmModuleOptions = {
     PostModule,
     UserModule,
     UploadsModule,
+    PetModule,
     AuthModule,
     MessageModule,
     UploadsModule,

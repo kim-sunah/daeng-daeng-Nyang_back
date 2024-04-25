@@ -52,5 +52,6 @@ export class Post {
 
   @OneToMany(() => Upload, (upload) => upload.post)
   images: Upload[];
+  
 
 }

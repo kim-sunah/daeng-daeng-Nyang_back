@@ -41,7 +41,7 @@ export class PostService {
     catch(err){
       console.log("Error")
     }
-    // return (await this.postRepository.save({userId : userId, title : title, content : content}));
+    
   }
 
   async findAll() {

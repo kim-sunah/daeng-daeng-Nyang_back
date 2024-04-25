@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
 import { User } from '../user/entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
+import { Pet } from 'src/pet/entities/pet.entity';
 
 @Module({
-  imports :[ TypeOrmModule.forFeature([Schedule, User]), AuthModule],
+  imports :[ TypeOrmModule.forFeature([Schedule, User, Pet]), AuthModule],
   controllers: [ScheduleController],
   providers: [ScheduleService],
 })

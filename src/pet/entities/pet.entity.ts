@@ -11,6 +11,7 @@ import { User } from '../../user/entities/user.entity';
 import {
   Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
+import { Schedule } from '../../schedule/entities/schedule.entity';
 @Entity({
     name : 'pet'
 })
@@ -20,7 +21,7 @@ export class Pet{
     id: number;
 
     //RFID_CD번호
-    @Column()
+    @Column({default : "-1"})
     rfidCd: String;
 
     @Column('int', { unsigned: true })
@@ -30,8 +31,8 @@ export class Pet{
     profileImage: string;
 
     //동물등록번호
-    @Column()
-    dogRegNo : String;
+    // @Column()
+    // dogRegNo : String;
 
     //개이름
     @IsString()
@@ -40,19 +41,19 @@ export class Pet{
 
     //성별
     @Column()
-    sexNm: number;
+    sexNm: String;
 
     //중성화여부
-    @Column()
+    @Column({default : false})
     neuterYn : boolean;
 
     //품종
     @Column()
     kindNm :String;
   
-    @IsString()
-    @Column('varchar', { length: 10, select: false, nullable: false })
-    password: string;
+    // @IsString()
+    // @Column('varchar', { length: 10, select: false, nullable: false })
+    // password: string;
   
     @CreateDateColumn()
     createdAt: Date;
@@ -66,4 +67,10 @@ export class Pet{
     @ManyToOne(() => User, (user) => user.pets,{ onUpdate: 'CASCADE', onDelete: 'CASCADE' })
     @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
     user: User;
+
+    @OneToMany(() => Schedule, (schedule) => schedule.petId)
+    schedule: Schedule[];
+
+
+    
 }

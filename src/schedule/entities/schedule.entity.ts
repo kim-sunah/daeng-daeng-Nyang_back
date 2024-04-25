@@ -2,31 +2,36 @@ import { Data } from "aws-sdk/clients/firehose";
 import { IsNumber } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../../user/entities/user.entity";
+import { Pet } from "src/pet/entities/pet.entity";
 @Entity({
-    name: 'schedule',
-  })
+  name: 'schedule',
+})
 export class Schedule {
-    @PrimaryGeneratedColumn()
-    id: string
+  @PrimaryGeneratedColumn()
+  id: number
 
-    @Column()
-    title: string
+  @Column()
+  title: string
 
-    @Column()
-    content: string
+  @Column()
+  content: string
 
-    
-    @Column({ unsigned: true })
-    userId: number;
+  @Column({ unsigned: true })
+  userId: number;
 
-    @Column({type: 'timestamp'})
-    date: Date;
+  @Column({ unsigned: true })
+  petId: string;
 
-    @Column()
-    Category: string
+  @Column({ type: 'timestamp' })
+  date: Date;
 
-    @ManyToOne(() => User, (user) => user.schedule)
-    user: User;
+  @Column()
+  Category: string
 
+  @ManyToOne(() => User, (user) => user.schedule)
+  user: User;
+
+  @ManyToOne(() => Pet, (pet) => pet.schedule)
+  pet: Pet;
 
 }
