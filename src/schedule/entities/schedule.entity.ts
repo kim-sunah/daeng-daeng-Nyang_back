@@ -3,9 +3,19 @@ import { IsNumber } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../../user/entities/user.entity";
 import { Pet } from "src/pet/entities/pet.entity";
+
+
+export enum categorys {
+  HOSPITAL = '병원',WALK = '산책', VACCINATION = '예방접종'
+}
+
+
+
 @Entity({
   name: 'schedule',
 })
+
+
 export class Schedule {
   @PrimaryGeneratedColumn()
   id: number
@@ -26,7 +36,7 @@ export class Schedule {
   date: Date;
 
   @Column()
-  Category: string
+  Category: categorys
 
   @ManyToOne(() => User, (user) => user.schedule)
   user: User;

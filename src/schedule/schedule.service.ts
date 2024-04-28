@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Schedule } from './entities/schedule.entity';
+import { Schedule,  categorys } from './entities/schedule.entity';
 import { Repository } from 'typeorm';
 
 import { Pet } from 'src/pet/entities/pet.entity';
@@ -17,7 +17,21 @@ export class ScheduleService {
     if (schedule.length > 2) {
       throw new BadRequestException('일정이 가득 찼습니다. 잠시 후 다시 시도하세요.');
     }
-    return await this.ScheduleRepository.save({ title: createScheduleDto.title, content: createScheduleDto.content, userId: userId, date: createScheduleDto.date, Category: createScheduleDto.category, petId: +createScheduleDto.petId })
+    if(createScheduleDto.category === "병원"){
+      return await this.ScheduleRepository.save({ title: createScheduleDto.title, content: createScheduleDto.content, userId: userId, date: createScheduleDto.date, Category: categorys.HOSPITAL,  petId: +createScheduleDto.petId })
+
+
+    }
+    else if(createScheduleDto.category === "산책"){
+      return await this.ScheduleRepository.save({ title: createScheduleDto.title, content: createScheduleDto.content, userId: userId, date: createScheduleDto.date, Category: categorys.WALK,  petId: +createScheduleDto.petId })
+
+
+    }
+    else if(createScheduleDto.category === "예방접종"){
+      return await this.ScheduleRepository.save({ title: createScheduleDto.title, content: createScheduleDto.content, userId: userId, date: createScheduleDto.date, Category: categorys.VACCINATION,  petId: +createScheduleDto.petId })
+
+
+    }
 
   }
 
@@ -57,12 +71,15 @@ export class ScheduleService {
         throw new NotFoundException("일정을 찾을수 없습니다")
       }
 
-      await this.ScheduleRepository.update(id, {
-        title: updateScheduleDto.title,
-        content: updateScheduleDto.content,
-        date: updateScheduleDto.date, // 이 부분이 title로 되어있어 수정이 필요합니다.
-        Category: updateScheduleDto.category
-      });
+      if(updateScheduleDto.category === "병원"){
+        await this.ScheduleRepository.update(id, {title: updateScheduleDto.title,content: updateScheduleDto.content,date: updateScheduleDto.date, Category: categorys.HOSPITAL});
+      }
+      else if(updateScheduleDto.category === "산책"){
+        await this.ScheduleRepository.update(id, {title: updateScheduleDto.title, content: updateScheduleDto.content,date: updateScheduleDto.date, Category: categorys.WALK});
+      }
+      else if(updateScheduleDto.category === "예방접종"){
+        await this.ScheduleRepository.update(id, {title: updateScheduleDto.title,content: updateScheduleDto.content,date: updateScheduleDto.date, Category: categorys.VACCINATION});
+      }
       return { message: "일정을 변경하였습니다." }
 
     }
