@@ -18,22 +18,28 @@ export class ScheduleController {
     return this.scheduleService.create(createScheduleDto, +userinfo.id);
   }
 
+  // 자신의 펫 모든 일정 정보 가져오기
   @Get()
-  findAll() {
-    return this.scheduleService.findAll();
+  @UseGuards(JwtAuthGuard)
+  findAll(@UserInfo() userinfo: User) {
+    return this.scheduleService.findAll(+userinfo.id);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.scheduleService.findOne(+id);
-  // }
+  //자신의 펫 일정 정보 가져오기
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id') id: string,@UserInfo() userinfo: User) {
+    return this.scheduleService.findOne(+id, +userinfo.id);
+  }
 
+  //자신의 펫 일정 업데이트
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updateScheduleDto: UpdateScheduleDto,@UserInfo() userinfo: User) {
     return this.scheduleService.update(+id, updateScheduleDto, +userinfo.id);
   }
 
+  //자신의 펫 일정 삭제
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string, @UserInfo() userinfo: User) {

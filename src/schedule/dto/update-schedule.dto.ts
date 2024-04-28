@@ -14,6 +14,6 @@ export class UpdateScheduleDto {
     date : Date
 
     @IsString()
-    Category : string
+    category : string
 
 }

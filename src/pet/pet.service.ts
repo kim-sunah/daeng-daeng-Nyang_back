@@ -19,44 +19,60 @@ import { basename, extname } from 'path';
 
 @Injectable()
 export class PetService {
-  constructor(@InjectRepository(Pet) private petRepository: Repository<Pet>,private readonly configService: ConfigService){}
+  constructor(@InjectRepository(Pet) private petRepository: Repository<Pet>, private readonly configService: ConfigService) { }
 
   private readonly s3Client = new S3Client({
     region: this.configService.getOrThrow('AWS_REGION'),
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY,
-        secretAccessKey: process.env.AWS_SECRET_KEY,
+      accessKeyId: process.env.AWS_ACCESS_KEY,
+      secretAccessKey: process.env.AWS_SECRET_KEY,
     },
-});
+  });
 
-  //자신의 펫 리스트
-  async MyPetList(id : number){
-    return await this.petRepository.find({where:{ userId : id}})
-  }
-
-  async PatList(){
+  //펫 전체 리스트
+  async PetList() {
     return await this.petRepository.find();
   }
 
-  //펫 등록
-  async create(filename : string, file :Buffer, rfidCd: string, dogNm : string , sexNm : string, neuterYn: boolean, kindNm:string, userId: number){
-    const ext = extname(filename);
-    const baseName = basename(filename,ext);
-    const filenames = `images/${baseName}-${Date.now()}${ext}`
-    console.log(filename)
+  //자신의 펫 리스트
+  async MyPetList(id: number) {
     try{
-   
-      await this.s3Client.send(new PutObjectCommand({Bucket : "sunah" , Key : filenames, Body:file}))
-      await this.petRepository.save({userId, profileImage:filenames, rfidCd, dogNm,sexNm,neuterYn : true,kindNm})
-      console.log("upload image")
+      const MyPet = await this.petRepository.find({ where: { userId: id } })
+      if (MyPet.length === 0) {
+        return { message: "펫이 존재하지않습니다." }
+      }
+      return MyPet;
     }
     catch(err){
+      throw new Error(err)
+    }
+
+  }
+
+
+  //펫 등록
+  async create(filename: string, file: Buffer, rfidCd: string, dogNm: string, sexNm: string, neuterYn: boolean, kindNm: string, userId: number) {
+    const ext = extname(filename);
+    const baseName = basename(filename, ext);
+    const filenames = `images/${baseName}-${Date.now()}${ext}`
+    console.log(filename)
+    try {
+
+      await this.s3Client.send(new PutObjectCommand({ Bucket: "sunah", Key: filenames, Body: file }))
+      await this.petRepository.save({ userId, profileImage: filenames, rfidCd, dogNm, sexNm, neuterYn: true, kindNm })
+      console.log("upload image")
+    }
+    catch (err) {
       console.log("Error")
     }
   }
 
-  
+
   //펫 정보 수정
+  async PetUpdate(id : number){
+    
+
+  }
 
 
   //펫 삭제

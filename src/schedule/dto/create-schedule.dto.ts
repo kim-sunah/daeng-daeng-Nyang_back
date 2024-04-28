@@ -15,5 +15,5 @@ export class CreateScheduleDto {
     date : Date
 
     @IsString()
-    Category : string
+    category : string
 }

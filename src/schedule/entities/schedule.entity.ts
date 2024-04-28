@@ -20,7 +20,7 @@ export class Schedule {
   userId: number;
 
   @Column({ unsigned: true })
-  petId: string;
+  petId: number;
 
   @Column({ type: 'timestamp' })
   date: Date;

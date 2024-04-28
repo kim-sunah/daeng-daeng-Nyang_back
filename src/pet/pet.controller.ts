@@ -15,7 +15,7 @@ export class PetController {
   //펫 전체리스트
   @Get("AllpetList")
   PetList(){
-    return this.petService.PatList();
+    return this.petService.PetList();
   }
 
 
@@ -40,6 +40,7 @@ export class PetController {
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   PetUpdate(@Param('id') id: string){
+    return this.petService.PetUpdate(+id);
 
   }
 
