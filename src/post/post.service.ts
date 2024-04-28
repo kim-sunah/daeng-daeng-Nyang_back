@@ -31,7 +31,7 @@ export class PostService {
     const ext = extname(filename);
     const baseName = basename(filename,ext);
     const filenames = `images/${baseName}-${Date.now()}${ext}`
-    console.log(filename)
+
     try{
    
       await this.s3Client.send(new PutObjectCommand({Bucket : "sunah" , Key : filenames, Body:file}))

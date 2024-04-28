@@ -4,8 +4,9 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
 import { Repository } from 'typeorm';
-import { User } from 'src/user/entities/user.entity';
+
 import { Pet } from 'src/pet/entities/pet.entity';
+
 
 @Injectable()
 export class ScheduleService {
@@ -26,7 +27,7 @@ export class ScheduleService {
       if (MyPet.length === 0) {
         return { message: "펫이 존재하지 않습니다." }
       }
-      return MyPet[0];
+      return MyPet;
     }
     catch (err) {
       throw new Error(err);

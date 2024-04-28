@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   HttpStatus,
   Param,
   Patch,
@@ -21,6 +22,7 @@ import { Request } from 'express';
 import { UserInfo } from 'src/auth/decorators/userinfo.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import path from 'path';
 @Controller('post')
 
 export class PostController {
@@ -30,7 +32,11 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('thumbnail'))
   create(@UploadedFile() file: Express.Multer.File, @Body("title") title: string, @Body("content") content : string, @UserInfo() userinfo: User) {
-   console.log(file)
+    const supportedExtensions = ['.jpg', '.jpeg', '.png'];
+    const fileExt = path.extname(file.originalname).toLowerCase();
+    if (!supportedExtensions.includes(fileExt)) {
+      throw new HttpException(`지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`, HttpStatus.BAD_REQUEST);
+    }
     return this.postService.create(file.originalname, file.buffer, title ,content, +userinfo.id);
   }
 
