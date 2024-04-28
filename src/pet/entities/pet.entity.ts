@@ -68,7 +68,8 @@ export class Pet{
     @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
     user: User;
 
-    @OneToMany(() => Schedule, (schedule) => schedule.petId)
+    @OneToMany(() => Schedule, (schedule) => schedule.pet)
+    
     schedule: Schedule[];
 
 

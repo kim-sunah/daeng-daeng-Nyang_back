@@ -5,11 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { Pet } from 'src/pet/entities/pet.entity';
 
 @Injectable()
 export class ScheduleService {
-  constructor(@InjectRepository(Schedule) private ScheduleRepository: Repository<Schedule>) { }
-  
+  constructor(@InjectRepository(Schedule) private ScheduleRepository: Repository<Schedule>, @InjectRepository(Pet) private PetRepository: Repository<Pet>) { }
+
   async create(createScheduleDto: CreateScheduleDto, userId: number) {
     const schedule = await this.ScheduleRepository.find({ where: { date: createScheduleDto.date } });
     if (schedule.length > 2) {
@@ -21,11 +22,11 @@ export class ScheduleService {
 
   async findAll(userId: number) {
     try {
-      const MyPet = await this.ScheduleRepository.find({ where: { userId }, relations: ["user", "pet"] });
+      const MyPet = await this.PetRepository.find({ where: { userId }, relations: ["schedule"] });
       if (MyPet.length === 0) {
-        return { message: "펫의 일정이 존재하지않습니다." }
+        return { message: "펫이 존재하지 않습니다." }
       }
-      return MyPet;
+      return MyPet[0];
     }
     catch (err) {
       throw new Error(err);
@@ -35,12 +36,12 @@ export class ScheduleService {
 
   async findOne(id: number, userId: number) {
     try {
-      const MyPet = await this.ScheduleRepository.find({ where: { petId: id, userId: userId }, relations: ["user", "pet"] })
-      console.log(MyPet)
+      const MyPet = await this.PetRepository.find({ where: { userId, id } ,relations: ['schedule'], })
+      console.log(MyPet[0])
       if (MyPet.length === 0) {
-        return { message: "펫의 일정이 존재하지않습니다." }
+        return { message: "펫이 존재하지 않습니다." }
       }
-      return MyPet;
+      return MyPet[0];
     }
     catch (err) {
       throw new Error(err);
