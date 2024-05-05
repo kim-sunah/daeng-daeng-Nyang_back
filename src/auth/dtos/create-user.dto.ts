@@ -1,26 +1,31 @@
-import { IsString, IsEmail , IsMobilePhone , IsStrongPassword , IsNotEmpty, IsEnum, IsOptional } from "class-validator";
-import { IsEqualTo } from "../decorators/match.decorator";
+import {
+  IsString,
+  IsEmail,
+  IsMobilePhone,
+  IsStrongPassword,
+  IsNotEmpty,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
+import { IsEqualTo } from '../decorators/match.decorator';
 
 export class CreateuserDto {
+  @IsEmail({})
+  email: string;
 
+  @IsString()
+  @IsNotEmpty({ message: 'Please enter your password' })
+  password: string;
 
-    @IsEmail({})
-    Email : string
+  @IsString()
+  @IsEqualTo('password')
+  confirmPassword: string;
 
-    @IsString()
-    @IsNotEmpty({message : "Please enter your password"})
-    Password : string
+  @IsString()
+  @IsNotEmpty({ message: 'Please enter a nickname' })
+  name: string;
 
-    @IsString()
-    @IsEqualTo("Password")
-    ConfirmPassword : string
-
-    @IsString()
-    @IsNotEmpty({message : "Please enter a nickname"})
-    name : string
-
-    @IsString()
-    @IsNotEmpty({message : "Please enter the Authentication number"})
-    Emailauthentication : string
-
+  @IsString()
+  @IsNotEmpty({ message: 'Please enter the Authentication number' })
+  emailAuthentication: string;
 }

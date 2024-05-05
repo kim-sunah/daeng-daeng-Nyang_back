@@ -27,19 +27,14 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
     private readonly messageService: MessageService,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
-  async signUp({
-    Email,
-    Password,
-    name,
-    Emailauthentication,
-  }: CreateuserDto) {
-    const email_Emailauthentication = await this.cacheManager.get(Email);
+  async signUp({ email, password, name, emailAuthentication }: CreateuserDto) {
+    const email_Emailauthentication = await this.cacheManager.get(email);
     try {
       const existedUser = await this.userRepository.findOne({
-        where: { email: Email },
+        where: { email: email },
       });
 
       if (existedUser) {
@@ -47,12 +42,12 @@ export class AuthService {
           `This Email is already in ${existedUser.registration_information} use`,
         ]);
       }
-      if (email_Emailauthentication !== Emailauthentication) {
+      if (email_Emailauthentication !== emailAuthentication) {
         throw new BadRequestException(['Authentication number does not match']);
       }
-      const hashedPassword = await bcrypt.hashSync(Password, 12);
+      const hashedPassword = await bcrypt.hashSync(password, 12);
       const user = this.userRepository.create({
-        email: Email,
+        email: email,
         password: hashedPassword,
         registration_information: 'SITE',
         name,
@@ -64,24 +59,22 @@ export class AuthService {
         throw error;
       }
       throw new InternalServerErrorException(
-        '회원 가입 중 오류가 발생했습니다.'
+        '회원 가입 중 오류가 발생했습니다.',
       );
     }
   }
 
   async signIn({ Email, Password }: SignInDto) {
     const user = await this.userRepository.findOne({ where: { email: Email } });
-    
 
     if (!user) {
       throw new BadRequestException(['This Email does not exist.']);
     }
     console.log(user);
     if (!(await bcrypt.compare(Password, user.password))) {
-      
       throw new UnauthorizedException('Invalid password.');
-  }
-    
+    }
+
     const accessToken = await this.createAccessToken(+user.id);
     const refreshToken = await this.createRefreshToken();
     return { accessToken, refreshToken };
@@ -100,7 +93,7 @@ export class AuthService {
       });
       if (existedUser) {
         throw new BadRequestException(
-          `This Email is already in ${existedUser.registration_information} use`
+          `This Email is already in ${existedUser.registration_information} use`,
         );
       }
       const user = this.userRepository.create({
@@ -114,7 +107,7 @@ export class AuthService {
         throw error;
       }
       throw new InternalServerErrorException(
-        '회원 가입 중 오류가 발생했습니다.'
+        '회원 가입 중 오류가 발생했습니다.',
       );
     }
   }
@@ -139,7 +132,7 @@ export class AuthService {
     email: string,
     gender: string,
     phone: string,
-    name: string
+    name: string,
   ) {
     var USER_GENDER;
     const NAVER_USER = await this.userRepository.findOne({
@@ -151,7 +144,7 @@ export class AuthService {
     const user = await this.userRepository.findOne({ where: { email: email } });
     if (user) {
       throw new BadRequestException(
-        `This Email is already in ${user.registration_information} use`
+        `This Email is already in ${user.registration_information} use`,
       );
     }
 
@@ -165,7 +158,7 @@ export class AuthService {
     const naveruser = this.userRepository.create({
       registration_information: 'NAVER',
       email,
-      name: name
+      name: name,
     });
     const userInfo = await this.userRepository.save(naveruser);
     return this.createUser(user);
@@ -197,7 +190,7 @@ export class AuthService {
       });
       if (existedUser) {
         throw new BadRequestException(
-          `This Email is already in ${existedUser.registration_information} use`
+          `This Email is already in ${existedUser.registration_information} use`,
         );
       }
       const user = this.userRepository.create({
@@ -211,7 +204,7 @@ export class AuthService {
         throw error;
       }
       throw new InternalServerErrorException(
-        '회원 가입 중 오류가 발생했습니다.'
+        '회원 가입 중 오류가 발생했습니다.',
       );
     }
   }
@@ -237,19 +230,17 @@ export class AuthService {
   }
 
   async verifyAccessToken(access_token: string) {
-
     try {
       const payload = await this.jwtService.verify(access_token);
-  
+
       return { success: true, id: payload.id };
     } catch (error) {
       const payload = await this.jwtService.verify(access_token, {
         ignoreExpiration: true,
       });
-   
+
       return { success: false, message: error.message, id: payload.id };
     }
-    
   }
   async verifyRefreshToken(refreshToken: string) {
     try {

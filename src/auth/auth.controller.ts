@@ -16,11 +16,14 @@ import { JwtAuthGuard } from './guard/jwt-auth.guards';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService,private readonly messageService: MessageService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly messageService: MessageService,
+  ) {}
 
   @Post('/signup')
   async signUp(@Body() createuserDto: CreateuserDto) {
-    console.log
+    console.log;
     const user = await this.authService.signUp(createuserDto);
 
     return {
@@ -32,7 +35,8 @@ export class AuthController {
 
   @Post('/sign-in')
   async signIn(@Body() signInDto: SignInDto) {
-    const { accessToken, refreshToken } =await this.authService.signIn(signInDto);
+    const { accessToken, refreshToken } =
+      await this.authService.signIn(signInDto);
     return {
       statusCode: HttpStatus.OK,
       message: '로그인에 성공했습니다.',
@@ -41,8 +45,8 @@ export class AuthController {
     };
   }
 
-  @Post('/Email_authentication')
-  async Emailauthentication(@Body('Email') email: string) {
+  @Post('/emailCheck')
+  async Emailauthentication(@Body('email') email: string) {
     let randomFraction = Math.random();
     let randomNumber = Math.floor(randomFraction * 1000000);
     let sixDigitNumber = randomNumber.toString().padStart(6, '0');
@@ -57,7 +61,7 @@ export class AuthController {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -77,15 +81,16 @@ export class AuthController {
         userData.response.email,
         userData.response.gender,
         userData.response.mobile,
-        userData.response.name
+        userData.response.name,
       );
-      const { accessToken, refreshToken } =
-        await this.authService.naversignin(userData.response.email);
+      const { accessToken, refreshToken } = await this.authService.naversignin(
+        userData.response.email,
+      );
       return {
         statusCode: HttpStatus.OK,
         message: '로그인에 성공했습니다.',
         accessToken,
-        refreshToken
+        refreshToken,
       };
     } catch (err) {
       return err; // 또는 적절한 오류 처리를 수행할 수 있습니다.
@@ -94,8 +99,9 @@ export class AuthController {
   @Post('kakaosignup')
   async postKakaoInfo(@Body() kakaoLoginDto: KakaoLoginDto) {
     const userinfo = await this.authService.kakosignUp(kakaoLoginDto);
-    const { accessToken, refreshToken } =
-      await this.authService.kakaosignIn(kakaoLoginDto.email);
+    const { accessToken, refreshToken } = await this.authService.kakaosignIn(
+      kakaoLoginDto.email,
+    );
     return {
       statusCode: HttpStatus.OK,
       message: '로그인에 성공했습니다.',
@@ -107,8 +113,9 @@ export class AuthController {
   @Post('googlesignup')
   async googlesignup(@Body() googleLoginDto: googleLoginDto) {
     await this.authService.googlesignup(googleLoginDto);
-    const { accessToken, refreshToken } =
-      await this.authService.googlesignin(googleLoginDto.email);
+    const { accessToken, refreshToken } = await this.authService.googlesignin(
+      googleLoginDto.email,
+    );
     return {
       statusCode: HttpStatus.OK,
       message: '로그인에 성공했습니다.',
@@ -116,5 +123,4 @@ export class AuthController {
       refreshToken,
     };
   }
-
 }
