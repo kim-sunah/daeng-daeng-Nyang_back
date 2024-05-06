@@ -11,10 +11,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthModule } from 'src/auth/auth.module';
 import { Schedule } from 'src/schedule/entities/schedule.entity';
+import { Upload } from 'src/uploads/entities/upload.entity';
 
 @Module({
 
-  imports: [TypeOrmModule.forFeature([Post,User, Schedule]) , AuthModule],
+  imports: [TypeOrmModule.forFeature([Post,User, Schedule, Upload]) , AuthModule],
   controllers: [PostController],
   providers: [PostService],
 })

@@ -18,6 +18,8 @@ import { Post } from './entities/post.entity';
 import { basename, extname } from 'path';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
+import { Upload } from 'src/uploads/entities/upload.entity';
+import { STATUS_CODES } from 'http';
 
 @Injectable()
 export class PostService {
@@ -25,6 +27,7 @@ export class PostService {
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly configService: ConfigService,
+    @InjectRepository(Upload) private UploadRepository: Repository<Upload>,
   ) {}
 
   private readonly s3Client = new S3Client({
@@ -35,32 +38,22 @@ export class PostService {
     },
   });
 
-  async create(
-    filename: string,
-    file: Buffer,
-    title: string,
-    content: string,
-    userId: number,
-  ) {
+  async create(filename: string,file: Buffer,title: string,content: string,userId: number) {
     const ext = extname(filename);
     const baseName = basename(filename, ext);
     const filenames = `images/${baseName}-${Date.now()}${ext}`;
-
+  
     try {
-      await this.s3Client.send(
-        new PutObjectCommand({ Bucket: 'sunah', Key: filenames, Body: file }),
-      );
-      await this.postRepository.save({
-        userId: userId,
-        thumbnail: filenames,
-        title: title,
-        content: content,
-      });
-      return {message : "게시글 작성 성공"}
-    } catch (err) {
-      throw new BadRequestException(err)
+      await this.s3Client.send(new PutObjectCommand({ Bucket: 'sunah', Key: filenames, Body: file }));
+      const post = await this.postRepository.create({userId: userId, thumbnail: filenames,title: title,content: content});
+      this.postRepository.save(post)
+      return {message: "게시물 작성 성공" , STATUS_CODES : 200}
+  } catch (err) {
+      throw new BadRequestException("Error" , err)
+      // Handle the error
     }
   }
+  
 
   async findAll() {
     const cachedArticles = await this.cacheManager.get('articles');
@@ -70,6 +63,7 @@ export class PostService {
     const articles = await this.postRepository.find({
       where: { deletedAt: null },
       select: ['id', 'title', 'updatedAt'],
+      take: 16
     });
     await this.cacheManager.set('articles', articles);
     return articles;
