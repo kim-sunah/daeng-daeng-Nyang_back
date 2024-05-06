@@ -56,9 +56,9 @@ export class PostService {
         title: title,
         content: content,
       });
-      console.log('upload image');
+      return {message : "게시글 작성 성공"}
     } catch (err) {
-      console.log('Error');
+      throw new BadRequestException(err)
     }
   }
 

@@ -35,7 +35,7 @@ export class UserService {
   async getUserInfo(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['posts'],
+      relations: ['posts',"pets","schedule"],
     });
     if (!user) {
       throw new NotFoundException('사용자를 찾을 수 없습니다.');

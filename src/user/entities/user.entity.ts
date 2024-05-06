@@ -55,7 +55,7 @@ export class User {
   @OneToMany(() => Post, (posts) => posts.user)
   posts: Post[];
 
-  @OneToMany(() => Schedule, (schedule) => schedule.userId)
+  @OneToMany(() => Schedule, (schedule) => schedule.user)
   schedule: Schedule[];
 
   @OneToMany(() => Message, (message) => message.host)
