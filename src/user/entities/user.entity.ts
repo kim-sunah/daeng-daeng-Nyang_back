@@ -1,6 +1,14 @@
 import { IsString } from 'class-validator';
 import {
-  Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn,OneToMany, Index, Relation
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  OneToMany,
+  Index,
+  Relation,
 } from 'typeorm';
 import { Pet } from '../../pet/entities/pet.entity';
 import { Role } from '../types/userRole.type';
@@ -19,7 +27,7 @@ export class User {
   @Column('varchar', { length: 20, nullable: false })
   name: string;
 
-  @Column({nullable: false} )
+  @Column({ nullable: false })
   email: string;
 
   @Column({ type: 'varchar', nullable: false })
@@ -41,12 +49,12 @@ export class User {
   @Column()
   registration_information: string;
 
-  @OneToMany(type => Pet , (pet) => pet.user)
-  pets : Pet[]
+  @OneToMany((type) => Pet, (pet) => pet.user)
+  pets: Pet[];
 
-  @OneToMany(() => Post, (posts) => posts.userId)
+  @OneToMany(() => Post, (posts) => posts.user)
   posts: Post[];
-  
+
   @OneToMany(() => Schedule, (schedule) => schedule.userId)
   schedule: Schedule[];
 

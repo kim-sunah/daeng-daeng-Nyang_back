@@ -8,6 +8,8 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { Post } from 'src/post/entities/post.entity';
 import { Schedule } from '../schedule/entities/schedule.entity';
+import { AuthService } from 'src/auth/auth.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -17,7 +19,8 @@ import { Schedule } from '../schedule/entities/schedule.entity';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([User,Post,Schedule]),
+    TypeOrmModule.forFeature([User, Post, Schedule]),
+    AuthModule,
   ],
   controllers: [UserController],
   providers: [UserService],
