@@ -46,11 +46,11 @@ export class AuthController {
   }
 
   @Post('/emailCheck')
-  async Emailauthentication(@Body('email') email: string) {
+  async emailCheck(@Body('email') email: string) {
     let randomFraction = Math.random();
     let randomNumber = Math.floor(randomFraction * 1000000);
     let sixDigitNumber = randomNumber.toString().padStart(6, '0');
-    return this.authService.Emailauthentication(email, sixDigitNumber);
+    return this.authService.emailCheck(email, sixDigitNumber);
   }
 
   @Post('naversignup')

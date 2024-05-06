@@ -31,7 +31,7 @@ export class AuthService {
   ) {}
 
   async signUp({ email, password, name, emailAuthentication }: CreateuserDto) {
-    const email_Emailauthentication = await this.cacheManager.get(email);
+    const emailCheck = await this.cacheManager.get(email);
     try {
       const existedUser = await this.userRepository.findOne({
         where: { email: email },
@@ -42,7 +42,8 @@ export class AuthService {
           `This Email is already in ${existedUser.registration_information} use`,
         ]);
       }
-      if (email_Emailauthentication !== emailAuthentication) {
+      console.log(emailCheck);
+      if (emailCheck !== emailAuthentication) {
         throw new BadRequestException(['Authentication number does not match']);
       }
       const hashedPassword = await bcrypt.hashSync(password, 12);
@@ -64,14 +65,14 @@ export class AuthService {
     }
   }
 
-  async signIn({ Email, Password }: SignInDto) {
-    const user = await this.userRepository.findOne({ where: { email: Email } });
+  async signIn({ email, password }: SignInDto) {
+    const user = await this.userRepository.findOne({ where: { email: email } });
 
     if (!user) {
       throw new BadRequestException(['This Email does not exist.']);
     }
     console.log(user);
-    if (!(await bcrypt.compare(Password, user.password))) {
+    if (!(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Invalid password.');
     }
 
@@ -252,7 +253,7 @@ export class AuthService {
     }
   }
 
-  async Emailauthentication(email: string, sixDigitNumber: string) {
+  async emailCheck(email: string, sixDigitNumber: string) {
     this.mailerService
       .sendMail({
         to: email,
@@ -264,6 +265,7 @@ export class AuthService {
       .catch((error) => {
         new ConflictException(error);
       });
+    console.log(sixDigitNumber);
 
     await this.cacheManager.set(email, sixDigitNumber, 60000);
     return { sucess: '이메일 인증' };

@@ -24,22 +24,34 @@ import { User } from 'src/user/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import path from 'path';
 @Controller('post')
-
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('thumbnail'))
-  create(@UploadedFile() file: Express.Multer.File, @Body("title") title: string, @Body("content") content : string, @UserInfo() userinfo: User) {
+  create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('title') title: string,
+    @Body('content') content: string,
+    @UserInfo() userinfo: User,
+  ) {
     const supportedExtensions = ['.jpg', '.jpeg', '.png'];
     const fileExt = path.extname(file.originalname).toLowerCase();
     if (!supportedExtensions.includes(fileExt)) {
-      throw new HttpException(`지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        `지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    return this.postService.create(file.originalname, file.buffer, title ,content, +userinfo.id);
+    return this.postService.create(
+      file.originalname,
+      file.buffer,
+      title,
+      content,
+      +userinfo.id,
+    );
   }
-
 
   @Get()
   findAll() {
@@ -53,14 +65,35 @@ export class PostController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto, @UserInfo() userinfo: User) {
-    return this.postService.update(+id, updatePostDto,userinfo.id);
+  @UseInterceptors(FileInterceptor('thumbnail'))
+  update(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body('title') title: string,
+    @Body('content') content: string,
+    @UserInfo() userinfo: User,
+  ) {
+    const supportedExtensions = ['.jpg', '.jpeg', '.png'];
+    const fileExt = path.extname(file.originalname).toLowerCase();
+    if (!supportedExtensions.includes(fileExt)) {
+      throw new HttpException(
+        `지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.postService.update(
+      +id,
+      file.originalname,
+      file.buffer,
+      title,
+      content,
+      userinfo.id,
+    );
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string, @UserInfo() userinfo: User) {
     return this.postService.remove(+id, userinfo.id);
-   
   }
 }
