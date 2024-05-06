@@ -54,7 +54,7 @@ export class PetController {
     const supportedExtensions = ['.jpg', '.jpeg', '.png'];
     const fileExt = path.extname(file.originalname).toLowerCase();
     if (!supportedExtensions.includes(fileExt)) {
-      throw new HttpException(`지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(`지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`, HttpStatus.BAD_REQUEST)
     }
     return this.petService.PetUpdate(+id, userinfo.id, file.originalname, file.buffer, rfidCd, dogNm, sexNm, neuterYn, kindNm);
    

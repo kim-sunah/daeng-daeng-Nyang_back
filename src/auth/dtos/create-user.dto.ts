@@ -25,7 +25,7 @@ export class CreateuserDto {
   @IsNotEmpty({ message: 'Please enter a nickname' })
   name: string;
 
-  @IsString()
-  @IsNotEmpty({ message: 'Please enter the Authentication number' })
-  emailAuthentication: string;
+  // @IsString()
+  // @IsNotEmpty({ message: 'Please enter the Authentication number' })
+  // emailAuthentication: string;
 }

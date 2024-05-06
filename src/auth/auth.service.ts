@@ -30,8 +30,8 @@ export class AuthService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
-  async signUp({ email, password, name, emailAuthentication }: CreateuserDto) {
-    const emailCheck = await this.cacheManager.get(email);
+  async signUp({ email, password, name }: CreateuserDto) {
+   
     try {
       const existedUser = await this.userRepository.findOne({
         where: { email: email },
@@ -42,17 +42,9 @@ export class AuthService {
           `This Email is already in ${existedUser.registration_information} use`,
         ]);
       }
-      console.log(emailCheck);
-      if (emailCheck !== emailAuthentication) {
-        throw new BadRequestException(['Authentication number does not match']);
-      }
+      
       const hashedPassword = await bcrypt.hashSync(password, 12);
-      const user = this.userRepository.create({
-        email: email,
-        password: hashedPassword,
-        registration_information: 'SITE',
-        name,
-      });
+      const user = this.userRepository.create({email: email,password: hashedPassword,registration_information: 'SITE',name});
 
       return this.createUser(user);
     } catch (error) {
