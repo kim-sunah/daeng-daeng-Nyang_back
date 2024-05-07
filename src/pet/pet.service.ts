@@ -71,14 +71,14 @@ export class PetService {
 
 
   //펫 등록
-  async create(filename: string, file: Buffer, rfidCd: string, dogNm: string, sexNm: string, neuterYn: boolean, kindNm: string, userId: number) {
+  async create(filename: string, file: Buffer, name: string,  age: string, breed: string, birth: Date, gender : string , userId: number) {
     const ext = extname(filename);
     const baseName = basename(filename, ext);
     const filenames = `images/${baseName}-${Date.now()}${ext}`
-
+   
     try {
       await this.s3Client.send(new PutObjectCommand({ Bucket: "sunah", Key: filenames, Body: file }))
-      await this.petRepository.save({ userId, profileImage: filenames, rfidCd, dogNm, sexNm, neuterYn: neuterYn, kindNm })
+      await this.petRepository.save({ userId, profileImage: "https://sunah.s3.ap-northeast-2.amazonaws.com/" + filenames, name, age, breed, birth, gender })
       return {message : "등록에 성공하였습니다"}
     }
     catch (err) {
@@ -88,13 +88,13 @@ export class PetService {
 
 
   //펫 정보 수정
-  async PetUpdate(id : number, userId : number, filename: string, file: Buffer, rfidCd: string, dogNm: string, sexNm: string, neuterYn: boolean, kindNm: string){
+  async PetUpdate(id : number, userId : number, filename: string, file: Buffer, name: string,  age: string, breed: string, birth: Date, gender : string ,){
     const ext = extname(filename);
     const baseName = basename(filename, ext);
     const filenames = `images/${baseName}-${Date.now()}${ext}`
     try {
       await this.s3Client.send(new PutObjectCommand({ Bucket: "sunah", Key: filenames, Body: file }))
-      await this.petRepository.update({id, userId},{ userId, profileImage: filenames, rfidCd, dogNm, sexNm, neuterYn: neuterYn, kindNm })
+      await this.petRepository.update({id, userId},{ userId, profileImage:"https://sunah.s3.ap-northeast-2.amazonaws.com/" + filenames, name, age, breed, birth, gender })
       return {message : "수정에 성공하였습니다"}
     }
     catch (err) {

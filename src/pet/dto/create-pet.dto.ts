@@ -11,26 +11,18 @@ export class CreatePetDto {
      *  나이
      */
     @IsString()
-    dogNm : string
+    name  : string
 
     @IsString()
-    sexNm : string
+    age  : string
 
     @IsString()
-    neuterYn : string
+    breed:  string
 
     @IsString()
-    kindNm : string
+    birth  : Date
 
     @IsNumber()
-    rfidCd : number
-
-
-
-
-
-
-
-
+    gender: string
 
 }

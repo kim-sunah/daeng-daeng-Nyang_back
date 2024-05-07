@@ -5,7 +5,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 import { User } from '../../user/entities/user.entity';
 
 import {
@@ -30,30 +30,27 @@ export class Pet{
     @Column('varchar', { length: 100, nullable: false  })
     profileImage: string;
 
-    //동물등록번호
-    // @Column()
-    // dogRegNo : String;
-
     //개이름
     @IsString()
     @Column('varchar', { length: 20, nullable: false })
-    dogNm: string;
+    name : string;
+
+
+    @IsNumber()
+    @Column()
+    age: string
 
     //성별
     @Column()
-    sexNm: String;
-
-    //중성화여부
-    @Column({default : false})
-    neuterYn : boolean;
+    gender:  String;
 
     //품종
     @Column()
-    kindNm :String;
+    breed :String;
+
+    @Column()
+    birth : Date
   
-    // @IsString()
-    // @Column('varchar', { length: 10, select: false, nullable: false })
-    // password: string;
   
     @CreateDateColumn()
     createdAt: Date;
@@ -69,9 +66,5 @@ export class Pet{
     user: User;
 
     @OneToMany(() => Schedule, (schedule) => schedule.pet)
-    
     schedule: Schedule[];
-
-
-    
 }

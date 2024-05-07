@@ -22,6 +22,7 @@ import { JwtAuthGuard } from './auth/guard/jwt-auth.guards';
 import { ScheduleModule } from './schedule/schedule.module';
 import { Schedule } from './schedule/entities/schedule.entity';
 import { PetModule } from './pet/pet.module';
+import { Postcategory } from './post/entities/postcategory.entitiy';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -33,7 +34,7 @@ const typeOrmModuleOptions = {
     username: configService.get('DB_USERNAME'),
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
-    entities: [Post, User, Pet,Upload, Message, Schedule],
+    entities: [Post, User, Pet,Upload, Message, Schedule , Postcategory],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),

@@ -29,14 +29,8 @@ export class PostController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('thumbnail'))
-  create(
-    @UploadedFile() file: Express.Multer.File,
-    @Body('title') title: string,
-    @Body('content') content: string,
-    @UserInfo() userinfo: User,
-  ) {
-    const supportedExtensions = ['.jpg', '.jpeg', '.png'];
+  @UseInterceptors(FileInterceptor('thumbnail'))create(@UploadedFile() file: Express.Multer.File,@Body('title') title: string, @Body('content') content: string, @Body('tags') tags: string[], @UserInfo() userinfo: User) {
+    const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
     const fileExt = path.extname(file.originalname).toLowerCase();
     if (!supportedExtensions.includes(fileExt)) {
       throw new HttpException(
@@ -44,19 +38,15 @@ export class PostController {
         HttpStatus.BAD_REQUEST,
       );
     }
-    return this.postService.create(
-      file.originalname,
-      file.buffer,
-      title,
-      content,
-      +userinfo.id,
-    );
+  
+    return this.postService.create(file.originalname,file.buffer,title,content, tags , +userinfo.id);
+  }
+  //모든 게시물 조회
+  @Get("All/:page")
+  findAll(@Param('page') page: string) {
+    return this.postService.findAll(+page);
   }
 
-  @Get()
-  findAll() {
-    return this.postService.findAll();
-  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -71,9 +61,10 @@ export class PostController {
     @UploadedFile() file: Express.Multer.File,
     @Body('title') title: string,
     @Body('content') content: string,
+    @Body('tags') tags: string[],
     @UserInfo() userinfo: User,
   ) {
-    const supportedExtensions = ['.jpg', '.jpeg', '.png'];
+    const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
     const fileExt = path.extname(file.originalname).toLowerCase();
     if (!supportedExtensions.includes(fileExt)) {
       throw new HttpException(
@@ -87,7 +78,9 @@ export class PostController {
       file.buffer,
       title,
       content,
+      tags,
       userinfo.id,
+     
     );
   }
 

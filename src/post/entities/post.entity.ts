@@ -13,6 +13,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Postcategory } from './postcategory.entitiy';
 
 @Entity({
   name: 'post',
@@ -52,6 +53,9 @@ export class Post {
 
   @OneToMany(() => Upload, (upload) => upload.post)
   images: Upload[];
+
+  @OneToMany(() => Postcategory , (postcategory) => postcategory.post)
+  postcategory : Postcategory[]
   
 
 }

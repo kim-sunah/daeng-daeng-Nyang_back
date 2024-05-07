@@ -36,7 +36,7 @@ export class UploadsService {
 
 
     try{
-      await this.s3Client.send(new PutObjectCommand({Bucket : "sunah" , Key : filenames, Body:file}))
+      await this.s3Client.send(new PutObjectCommand({Bucket : "sunah" , Key : "https://sunah.s3.ap-northeast-2.amazonaws.com/" + filenames, Body:file}))
       console.log("upload image")
     }
     catch(err){
