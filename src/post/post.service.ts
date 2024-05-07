@@ -106,8 +106,10 @@ export class PostService {
       tags.map(async(item) => (
         await this.PostcategoryRepository.save({postId : post.id , category : item})
       ))
-      
       return { message: '게시물을 수정하였습니다' };
+    }
+    else if(post.userId !== userId){
+      return {message : "수정 권한이 없습니다"}
     }
   }
 
