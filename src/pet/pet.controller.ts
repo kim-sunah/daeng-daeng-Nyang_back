@@ -39,13 +39,20 @@ export class PetController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('profileImage'))
   PetRegistration(@UploadedFile() file: Express.Multer.File, @Body("name") name: string, @Body("age") age: string, @Body("breed") breed: string, @Body("birth") birth: Date, @Body("gender") gender: string, @UserInfo() userinfo: User) {
-    const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
+   
+    if(file){
+      const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
     const fileExt = path.extname(file.originalname).toLowerCase();
     if (!supportedExtensions.includes(fileExt)) {
       throw new HttpException(`지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`, HttpStatus.BAD_REQUEST);
     }
-    
+
     return this.petService.create(file.originalname, file.buffer, name, age, breed, birth, gender, +userinfo.id);
+    }
+    else if(file === undefined || !file){
+      return this.petService.createNotImage(name, age, breed, birth, gender, +userinfo.id);
+    }
+    
   }
 
   //펫 정보 수정
@@ -53,12 +60,17 @@ export class PetController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('profileImage'))
   PetUpdate(@Param('id') id: string, @UserInfo() userinfo: User, @UploadedFile() file: Express.Multer.File,  @Body("name") name: string, @Body("age") age: string, @Body("breed") breed: string, @Body("birth") birth: Date, @Body("gender") gender: string,) {
+    if(file){
     const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
     const fileExt = path.extname(file.originalname).toLowerCase();
     if (!supportedExtensions.includes(fileExt)) {
       throw new HttpException(`지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`, HttpStatus.BAD_REQUEST)
     }
     return this.petService.PetUpdate(+id, userinfo.id, file.originalname, file.buffer,name, age, breed, birth, gender,);
+  }
+   else if(file === undefined || !file){
+    return this.petService.PetUpdateNotimage(+id, userinfo.id, name, age, breed, birth, gender,);
+   }
    
 
   }
