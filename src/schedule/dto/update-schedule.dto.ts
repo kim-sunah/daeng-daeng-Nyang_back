@@ -1,19 +1,21 @@
-
 import { IsDate, IsString } from 'class-validator';
 import { CreateScheduleDto } from './create-schedule.dto';
 
 export class UpdateScheduleDto {
+  @IsString()
+  title: string;
 
-    @IsString()
-    title: string
+  @IsString()
+  content: string;
 
-    @IsString()
-    content: string
+  @IsString()
+  place: string;
 
-   
-    date : Date
+  @IsString()
+  location: string;
 
-    @IsString()
-    category : string
+  date: Date;
 
+  @IsString()
+  category: string;
 }
