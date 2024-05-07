@@ -20,10 +20,6 @@ export class Pet{
     @PrimaryGeneratedColumn({ unsigned: true })
     id: number;
 
-    //RFID_CD번호
-    @Column({default : "-1"})
-    rfidCd: String;
-
     @Column('int', { unsigned: true })
     userId: number;
 
@@ -50,7 +46,6 @@ export class Pet{
 
     @Column()
     birth : Date
-  
   
     @CreateDateColumn()
     createdAt: Date;
