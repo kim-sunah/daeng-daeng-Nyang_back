@@ -10,6 +10,7 @@ import {
   Post,
   Req,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -21,7 +22,7 @@ import { JwtAuthGuard } from '../auth/guard/jwt-auth.guards';
 import { Request } from 'express';
 import { UserInfo } from 'src/auth/decorators/userinfo.decorator';
 import { User } from 'src/user/entities/user.entity';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import path from 'path';
 @Controller('post')
 export class PostController {
@@ -29,17 +30,21 @@ export class PostController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('thumbnail'))create(@UploadedFile() file: Express.Multer.File,@Body('title') title: string, @Body('content') content: string, @Body('tags') tags: string[], @UserInfo() userinfo: User) {
-    const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
-    const fileExt = path.extname(file.originalname).toLowerCase();
-    if (!supportedExtensions.includes(fileExt)) {
-      throw new HttpException(
-        `지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  @UseInterceptors(AnyFilesInterceptor())
+  create(@UploadedFiles() files: Array<Express.Multer.File> ,@Body('title') title: string, @Body('content') content: string, @Body('tags') tags: string[], @UserInfo() userinfo: User) {
   
-    return this.postService.create(file.originalname,file.buffer,title,content, tags , +userinfo.id);
+      files.map((file) => {
+        const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
+        const fileExt = path.extname(file.originalname).toLowerCase();
+        if (!supportedExtensions.includes(fileExt)) {
+          throw new HttpException(
+            `지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      })
+      return this.postService.create(files,title,content, tags , +userinfo.id );
+    
   }
   //모든 게시물 조회
   @Get("All/:page")
@@ -57,7 +62,7 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('thumbnail'))
   update(@UploadedFile() file: Express.Multer.File , @Param('id') id: string,@Body('title') title: string,@Body('content') content: string,@Body('tags') tags: string[],@UserInfo() userinfo: User,) {
-   
+    
     const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
     const fileExt = path.extname(file.originalname).toLowerCase();
     if (!supportedExtensions.includes(fileExt)) {
