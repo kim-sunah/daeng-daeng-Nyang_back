@@ -23,14 +23,13 @@ export class Pet{
     @Column('int', { unsigned: true })
     userId: number;
 
-    @Column('varchar', { length: 100, nullable: false  })
+    @Column('varchar', { length: 100, nullable: false,})
     profileImage: string;
 
     //개이름
     @IsString()
     @Column('varchar', { length: 20, nullable: false })
     name : string;
-
 
     @IsNumber()
     @Column()

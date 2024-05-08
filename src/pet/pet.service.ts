@@ -86,6 +86,20 @@ export class PetService {
     }
   }
 
+  async createNotImage(name: string,  age: string, breed: string, birth: Date, gender : string , userId: number) {
+
+    try {
+      await this.petRepository.save({ userId, name, age, breed, birth, gender })
+      return {message : "등록에 성공하였습니다"}
+    }
+    catch (err) {
+      throw new Error(err);
+    }
+
+  }
+
+  
+
 
   //펫 정보 수정
   async PetUpdate(id : number, userId : number, filename: string, file: Buffer, name: string,  age: string, breed: string, birth: Date, gender : string ,){
@@ -101,6 +115,17 @@ export class PetService {
       throw new Error(err);
     }
 
+
+  }
+
+  async PetUpdateNotimage(id : number , userId : number, name : string, age : string, breed : string, birth : Date, gender : string){
+    try {
+      await this.petRepository.update({id, userId},{ userId, name, age, breed, birth, gender })
+      return {message : "수정에 성공하였습니다"}
+    }
+    catch (err) {
+      throw new Error(err);
+    }
 
   }
 

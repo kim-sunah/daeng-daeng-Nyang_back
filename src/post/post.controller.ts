@@ -57,7 +57,7 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('thumbnail'))
   update(@UploadedFile() file: Express.Multer.File , @Param('id') id: string,@Body('title') title: string,@Body('content') content: string,@Body('tags') tags: string[],@UserInfo() userinfo: User,) {
-    console.log(file)
+   
     const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
     const fileExt = path.extname(file.originalname).toLowerCase();
     if (!supportedExtensions.includes(fileExt)) {
