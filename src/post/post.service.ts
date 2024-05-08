@@ -69,7 +69,7 @@ export class PostService {
   }
   
   async findAll(page : number) {
-    const articles = await this.postRepository.find({where: { deletedAt: null },select: ['id', 'title', 'updatedAt'], skip : (page - 1) * 16, take: 16 , relations : ["postcategory"]});
+    const articles = await this.postRepository.find({where: { deletedAt: null }, skip : (page - 1) * 16, take: 16 , relations : ["postcategory"]});
     const cachedArticles = await this.cacheManager.get('articles');
     if (cachedArticles === articles) {
       return cachedArticles;
