@@ -32,8 +32,7 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   create(@UploadedFiles() files: Array<Express.Multer.File> ,@Body('title') title: string, @Body('content') content: string, @Body('tags') tags: string[], @UserInfo() userinfo: User) {
-  
-      files.map((file) => {
+    files.map((file) => {
         const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
         const fileExt = path.extname(file.originalname).toLowerCase();
         if (!supportedExtensions.includes(fileExt)) {
@@ -60,27 +59,20 @@ export class PostController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('thumbnail'))
-  update(@UploadedFile() file: Express.Multer.File , @Param('id') id: string,@Body('title') title: string,@Body('content') content: string,@Body('tags') tags: string[],@UserInfo() userinfo: User,) {
+  @UseInterceptors(AnyFilesInterceptor())
+  update(@UploadedFiles() files: Array<Express.Multer.File> , @Param('id') id: string,@Body('title') title: string,@Body('content') content: string,@Body('tags') tags: string[],@UserInfo() userinfo: User,) {
     
-    const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
-    const fileExt = path.extname(file.originalname).toLowerCase();
-    if (!supportedExtensions.includes(fileExt)) {
-      throw new HttpException(
-        `지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    return this.postService.update(
-      +id,
-      file.originalname,
-      file.buffer,
-      title,
-      content,
-      tags,
-      userinfo.id,
-     
-    );
+    files.map((file) => {
+      const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
+      const fileExt = path.extname(file.originalname).toLowerCase();
+      if (!supportedExtensions.includes(fileExt)) {
+        throw new HttpException(
+          `지원하지 않는 파일 확장자입니다. (${supportedExtensions.join(', ')})`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    })
+    return this.postService.update(+id,files,title,content,tags,userinfo.id);
   }
 
   @Delete(':id')

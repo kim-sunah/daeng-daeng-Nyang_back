@@ -148,10 +148,12 @@ export class ScheduleService {
   async remove(id: number, userId: number) {
     try {
       const schedule = await this.ScheduleRepository.findOne({
-        where: { id, userId },
+        where: { id },
       });
       if (!schedule) {
-        throw new NotFoundException('일정을 찾을수 없습니다');
+        throw new Error('일정을 찾을수 없습니다');
+      } else if (schedule.userId != userId) {
+        throw new Error('작성자만 삭제 가능합니다.');
       }
       await this.ScheduleRepository.delete({ id });
       return { message: '일정을 삭제하였습니다.' };
