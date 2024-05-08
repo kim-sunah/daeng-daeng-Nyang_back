@@ -25,25 +25,10 @@ export class ScheduleController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('profileImage'))
   create(
-    @Body('petId') petId: string,
-    @Body('title') title: string,
-    @Body('content') content: string,
-    @Body('place') place: string,
-    @Body('location') location: string,
-    @Body('date') date: string,
-    @Body('category') category: string,
+    @Body() createScheduleDto: CreateScheduleDto,
     @UserInfo() userinfo: User,
   ) {
-    return this.scheduleService.create(
-      petId,
-      title,
-      content,
-      place,
-      location,
-      new Date(date),
-      category,
-      +userinfo.id,
-    );
+    return this.scheduleService.create(createScheduleDto, +userinfo.id);
   }
 
   // 자신의 펫 모든 일정 정보 가져오기
@@ -65,26 +50,10 @@ export class ScheduleController {
   @UseGuards(JwtAuthGuard)
   update(
     @Param('id') id: string,
-    @Body('petId') petId: string,
-    @Body('title') title: string,
-    @Body('content') content: string,
-    @Body('place') place: string,
-    @Body('location') location: string,
-    @Body('date') date: string,
-    @Body('category') category: string,
+    @Body() updateScheduleDto: UpdateScheduleDto,
     @UserInfo() userinfo: User,
   ) {
-    return this.scheduleService.update(
-      +id,
-      petId,
-      title,
-      content,
-      place,
-      location,
-      new Date(date),
-      category,
-      +userinfo.id,
-    );
+    return this.scheduleService.update(+id, updateScheduleDto, +userinfo.id);
   }
 
   //자신의 펫 일정 삭제
