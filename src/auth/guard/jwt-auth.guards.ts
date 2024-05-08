@@ -54,7 +54,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       return true;
     } catch (err) {
-      throw new UnauthorizedException('로그인이 필요한 서비스입니다');
+      throw new UnauthorizedException('로그인 혹은 접근권한이 없습니다');
     }
   }
 }
