@@ -19,47 +19,58 @@ export class ScheduleService {
     @InjectRepository(Pet) private PetRepository: Repository<Pet>,
   ) {}
 
-  async create(createScheduleDto: CreateScheduleDto, userId: number) {
+  async create(
+    petId: string,
+    title: string,
+    content: string,
+    place: string,
+    location: string,
+    date: Date,
+    category: string,
+    userId: number,
+  ) {
     const schedule = await this.ScheduleRepository.find({
-      where: { date: createScheduleDto.date },
+      where: { date },
     });
+    console.log(date);
+    console.log(schedule);
     if (schedule.length > 2) {
       throw new BadRequestException(
         '일정이 가득 찼습니다. 잠시 후 다시 시도하세요.',
       );
     }
-    if (createScheduleDto.category === '병원') {
+    if (category === '병원') {
       return await this.ScheduleRepository.save({
-        title: createScheduleDto.title,
-        content: createScheduleDto.content,
+        title: title,
+        content: content,
         userId: userId,
-        date: createScheduleDto.date,
-        place: createScheduleDto.place,
-        location: createScheduleDto.location,
+        date: date,
+        place: place,
+        location: location,
         category: categorys.HOSPITAL,
-        petId: +createScheduleDto.petId,
+        petId: +petId,
       });
-    } else if (createScheduleDto.category === '산책') {
+    } else if (category === '산책') {
       return await this.ScheduleRepository.save({
-        title: createScheduleDto.title,
-        content: createScheduleDto.content,
+        title: title,
+        content: content,
         userId: userId,
-        date: createScheduleDto.date,
-        place: createScheduleDto.place,
-        location: createScheduleDto.location,
+        date: date,
+        place: place,
+        location: location,
         category: categorys.WALK,
-        petId: +createScheduleDto.petId,
+        petId: +petId,
       });
-    } else if (createScheduleDto.category === '예방접종') {
+    } else if (category === '예방접종') {
       return await this.ScheduleRepository.save({
-        title: createScheduleDto.title,
-        content: createScheduleDto.content,
+        title: title,
+        content: content,
         userId: userId,
-        date: createScheduleDto.date,
-        place: createScheduleDto.place,
-        location: createScheduleDto.location,
+        date: date,
+        place: place,
+        location: location,
         category: categorys.VACCINATION,
-        petId: +createScheduleDto.petId,
+        petId: +petId,
       });
     }
   }
@@ -97,7 +108,13 @@ export class ScheduleService {
 
   async update(
     id: number,
-    updateScheduleDto: UpdateScheduleDto,
+    petId: string,
+    title: string,
+    content: string,
+    place: string,
+    location: string,
+    date: Date,
+    category: string,
     userId: number,
   ) {
     try {
@@ -108,32 +125,35 @@ export class ScheduleService {
         throw new NotFoundException('일정을 찾을수 없습니다');
       }
 
-      if (updateScheduleDto.category === '병원') {
+      if (category === '병원') {
         await this.ScheduleRepository.update(id, {
-          title: updateScheduleDto.title,
-          content: updateScheduleDto.content,
-          date: updateScheduleDto.date,
-          place: updateScheduleDto.place,
-          location: updateScheduleDto.location,
+          title: title,
+          content: content,
+          date: date,
+          place: place,
+          location: location,
           category: categorys.HOSPITAL,
+          petId: +petId,
         });
-      } else if (updateScheduleDto.category === '산책') {
+      } else if (category === '산책') {
         await this.ScheduleRepository.update(id, {
-          title: updateScheduleDto.title,
-          content: updateScheduleDto.content,
-          date: updateScheduleDto.date,
-          place: updateScheduleDto.place,
-          location: updateScheduleDto.location,
+          title: title,
+          content: content,
+          date: date,
+          place: place,
+          location: location,
           category: categorys.WALK,
+          petId: +petId,
         });
-      } else if (updateScheduleDto.category === '예방접종') {
+      } else if (category === '예방접종') {
         await this.ScheduleRepository.update(id, {
-          title: updateScheduleDto.title,
-          content: updateScheduleDto.content,
-          date: updateScheduleDto.date,
-          place: updateScheduleDto.place,
-          location: updateScheduleDto.location,
+          title: title,
+          content: content,
+          date: date,
+          place: place,
+          location: location,
           category: categorys.VACCINATION,
+          petId: +petId,
         });
       }
       return { message: '일정을 변경하였습니다.' };

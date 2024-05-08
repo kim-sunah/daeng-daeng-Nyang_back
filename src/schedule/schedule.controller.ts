@@ -1,21 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ScheduleService } from './schedule.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { UserInfo } from 'src/auth/decorators/userinfo.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guards';
-
+import { FileInterceptor } from '@nestjs/platform-express';
+import path from 'path';
 @Controller('schedule')
-
 export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Body() createScheduleDto: CreateScheduleDto,@UserInfo() userinfo: User) {
-    // console.log(createScheduleDto, userinfo);
-    return this.scheduleService.create(createScheduleDto, +userinfo.id);
+  @UseInterceptors(FileInterceptor('profileImage'))
+  create(
+    @Body('petId') petId: string,
+    @Body('title') title: string,
+    @Body('content') content: string,
+    @Body('place') place: string,
+    @Body('location') location: string,
+    @Body('date') date: string,
+    @Body('category') category: string,
+    @UserInfo() userinfo: User,
+  ) {
+    return this.scheduleService.create(
+      petId,
+      title,
+      content,
+      place,
+      location,
+      new Date(date),
+      category,
+      +userinfo.id,
+    );
   }
 
   // 자신의 펫 모든 일정 정보 가져오기
@@ -28,22 +56,42 @@ export class ScheduleController {
   //자신의 펫 일정 정보 가져오기
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string,@UserInfo() userinfo: User) {
+  findOne(@Param('id') id: string, @UserInfo() userinfo: User) {
     return this.scheduleService.findOne(+id, +userinfo.id);
   }
 
   //자신의 펫 일정 업데이트
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() updateScheduleDto: UpdateScheduleDto,@UserInfo() userinfo: User) {
-    return this.scheduleService.update(+id, updateScheduleDto, +userinfo.id);
+  update(
+    @Param('id') id: string,
+    @Body('petId') petId: string,
+    @Body('title') title: string,
+    @Body('content') content: string,
+    @Body('place') place: string,
+    @Body('location') location: string,
+    @Body('date') date: string,
+    @Body('category') category: string,
+    @UserInfo() userinfo: User,
+  ) {
+    return this.scheduleService.update(
+      +id,
+      petId,
+      title,
+      content,
+      place,
+      location,
+      new Date(date),
+      category,
+      +userinfo.id,
+    );
   }
 
   //자신의 펫 일정 삭제
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string, @UserInfo() userinfo: User) {
-    console.log(userinfo.id)
+    console.log(userinfo.id);
     return this.scheduleService.remove(+id, userinfo.id);
   }
 }

@@ -3,6 +3,9 @@ import { CreateScheduleDto } from './create-schedule.dto';
 
 export class UpdateScheduleDto {
   @IsString()
+  petId: string;
+
+  @IsString()
   title: string;
 
   @IsString()
