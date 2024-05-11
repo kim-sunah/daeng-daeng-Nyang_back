@@ -224,15 +224,13 @@ export class AuthService {
 
   async verifyAccessToken(access_token: string) {
     try {
+   
       const payload = await this.jwtService.verify(access_token);
 
       return { success: true, id: payload.id };
-    } catch (error) {
-      const payload = await this.jwtService.verify(access_token, {
-        ignoreExpiration: true,
-      });
-
-      return { success: false, message: error.message, id: payload.id };
+    } 
+    catch (error) {
+      return { success: false, message: error.message };
     }
   }
   async verifyRefreshToken(refreshToken: string) {

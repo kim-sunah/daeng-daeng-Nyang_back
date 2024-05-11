@@ -54,6 +54,7 @@ export class PostController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+  
     return this.postService.findOne(+id);
   }
 
@@ -61,7 +62,6 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   update(@UploadedFiles() files: Array<Express.Multer.File> , @Param('id') id: string,@Body('title') title: string,@Body('content') content: string,@Body('tags') tags: string[],@UserInfo() userinfo: User,) {
-    
     files.map((file) => {
       const supportedExtensions = ['.jpg', '.jpeg', '.png','webp','avif'];
       const fileExt = path.extname(file.originalname).toLowerCase();

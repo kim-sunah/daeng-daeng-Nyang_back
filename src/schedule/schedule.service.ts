@@ -85,7 +85,6 @@ export class ScheduleService {
         where: { userId, id },
         relations: ['schedule'],
       });
-      console.log(MyPet[0]);
       if (MyPet.length === 0) {
         return { message: '펫이 존재하지 않습니다.' };
       }

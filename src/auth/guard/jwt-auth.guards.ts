@@ -14,7 +14,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super('jwt');
   }
   async canActivate(context: ExecutionContext) {
-    try {
+  
       
       const req = context.switchToHttp().getRequest();
       const accessToken = req.headers.authorization.split(' ')[1];
@@ -26,35 +26,28 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       }
  
       // access token 검증
-      const isVerifiedAccessToken =
-        await this.authService.verifyAccessToken(accessToken);
-      const id = isVerifiedAccessToken.id;
-      console.log(accessToken, refreshToken);
-
-      if (isVerifiedAccessToken.message === 'jwt expired') {
-        // refresh token 검증
-
-        const isVerifiedRefreshToken =
-          await this.authService.verifyRefreshToken(refreshToken);
-
-        // refresh token 만료
-        if (isVerifiedRefreshToken.message === 'jwt expired') {
-          throw new UnauthorizedException(
-            '토큰이 만료되었습니다. 다시 로그인해주세요.',
-          );
+      const isVerifiedAccessToken = await this.authService.verifyAccessToken(accessToken);
+      if(isVerifiedAccessToken.id){
+        const id = isVerifiedAccessToken.id;
+        if (isVerifiedAccessToken.message === 'jwt expired') {
+          // refresh token 검증
+          const isVerifiedRefreshToken =await this.authService.verifyRefreshToken(refreshToken);
+          // refresh token 만료
+          if (isVerifiedRefreshToken.message === 'jwt expired') {
+            throw new UnauthorizedException(
+              '토큰이 만료되었습니다. 다시 로그인해주세요.',
+            );
+          }
+  
+          // access token 재발급
+          const newAccessToken = await this.authService.createAccessToken(id);
+          req.user = { id, accessToken: newAccessToken, refreshToken };
+          return true;
         }
-
-        // access token 재발급
-        const newAccessToken = await this.authService.createAccessToken(id);
-        req.user = { id, accessToken: newAccessToken, refreshToken };
+        req.user = { id, accessToken, refreshToken };
         return true;
       }
-
-      req.user = { id, accessToken, refreshToken };
-
-      return true;
-    } catch (err) {
-      throw new UnauthorizedException('로그인 혹은 접근권한이 없습니다');
-    }
-  }
+      throw new UnauthorizedException('accessToken Error');
+    } 
+  
 }
