@@ -105,29 +105,19 @@ export class PostService {
   }
 
   async findOne(id: number) {
-    try{
+   
       const post = await this.postRepository.findOne({ where: { id: id }, relations: ["postcategory", "images"] });
       if (_.isNaN(post) || _.isNil(post)) {
         throw new BadRequestException('게시물을 찾지 못하였습니다');
       }
-      return await this.postRepository.findOne({
-        where: { id, deletedAt: null },
-      });
-
-    }
-    catch(error){
-      throw new HttpException({
-        status: HttpStatus.BAD_GATEWAY,
-        error: '예상치 못한 에러가 발생했습니다.',
-      }, HttpStatus.BAD_GATEWAY, {
-        cause: error
-      });
-    }
+      return post
+    
+  
   
   }
 
   async update(id: number, files: Array<Express.Multer.File>, title: string, content: string, tags: string[], userId: number,) {
-    try{
+   
       let isFirstFileProcessed = false;
       let isSecondFileProcessed = false;
       const post = await this.postRepository.findOne({ where: { id: id } });
@@ -163,23 +153,11 @@ export class PostService {
       }
       else if(post.userId!== userId){
         throw new UnauthorizedException("삭제 권한이 없습니다.")
-      }
-
     }
-    catch(error){
-      throw new HttpException({
-        status: HttpStatus.BAD_GATEWAY,
-        error: '예상치 못한 에러가 발생했습니다.',
-      }, HttpStatus.BAD_GATEWAY, {
-        cause: error
-      });
-    }
-   
-   
   }
 
   async remove(id: number, userId: number) {
-    try{
+   
       const postDelete = await this.postRepository.findOne({ where: { id: id }, relations: ['postcategory', "images"] });
       if (postDelete.userId === userId) {
         if (_.isNaN(postDelete) || _.isNil(postDelete)) {
@@ -196,15 +174,8 @@ export class PostService {
         throw new UnauthorizedException("삭제 권한이 없습니다.")
       }
 
-    }
-    catch(error){
-      throw new HttpException({
-        status: HttpStatus.BAD_GATEWAY,
-        error: '예상치 못한 에러가 발생했습니다.',
-      }, HttpStatus.BAD_GATEWAY, {
-        cause: error
-      });
-    }
+    
+  
    
 
 
