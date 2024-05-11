@@ -23,6 +23,8 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { Schedule } from './schedule/entities/schedule.entity';
 import { PetModule } from './pet/pet.module';
 import { Postcategory } from './post/entities/postcategory.entitiy';
+import { ChatModule } from './chat/chat.module';
+import { Chat } from './chat/entities/chat.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -34,7 +36,7 @@ const typeOrmModuleOptions = {
     username: configService.get('DB_USERNAME'),
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
-    entities: [Post, User, Pet,Upload, Message, Schedule , Postcategory],
+    entities: [Post, User, Pet, Upload, Message, Schedule, Postcategory, Chat],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -74,10 +76,9 @@ const typeOrmModuleOptions = {
     MessageModule,
     UploadsModule,
     ScheduleModule,
-    
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-
 export class AppModule {}
