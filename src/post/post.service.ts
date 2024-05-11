@@ -43,7 +43,7 @@ export class PostService {
   });
 
   async create(files: Array<Express.Multer.File>, title: string, content: string, tags: string[], userId: number) {
-    try{
+    
       let isFirstFileProcessed = false;
       let isSecondFileProcessed = false;
       for (const file of files) {
@@ -69,15 +69,8 @@ export class PostService {
       }
       return { message: "게시물 작성 성공", STATUS_CODES: 200 }
 
-    }
-    catch(error){
-      throw new HttpException({
-        status: HttpStatus.BAD_GATEWAY,
-        error: '예상치 못한 에러가 발생했습니다.',
-      }, HttpStatus.BAD_GATEWAY, {
-        cause: error
-      });
-    }
+    
+   
   
 
   }
