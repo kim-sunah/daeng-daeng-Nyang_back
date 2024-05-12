@@ -15,9 +15,7 @@ import { Pet } from './pet/entities/pet.entity';
 import { UploadsModule } from './uploads/uploads.module';
 import { AuthModule } from './auth/auth.module';
 import { AppService } from './app.service';
-import { MessageModule } from './message/message.module';
 import { Upload } from './uploads/entities/upload.entity';
-import { Message } from './message/entities/message.entity';
 import { JwtAuthGuard } from './auth/guard/jwt-auth.guards';
 import { ScheduleModule } from './schedule/schedule.module';
 import { Schedule } from './schedule/entities/schedule.entity';
@@ -25,6 +23,7 @@ import { PetModule } from './pet/pet.module';
 import { Postcategory } from './post/entities/postcategory.entitiy';
 import { ChatModule } from './chat/chat.module';
 import { Chat } from './chat/entities/chat.entity';
+import { EventsModule } from './events/events.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -36,7 +35,7 @@ const typeOrmModuleOptions = {
     username: configService.get('DB_USERNAME'),
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
-    entities: [Post, User, Pet, Upload, Message, Schedule, Postcategory, Chat],
+    entities: [Post, User, Pet, Upload, Schedule, Postcategory, Chat],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -73,10 +72,10 @@ const typeOrmModuleOptions = {
     UploadsModule,
     PetModule,
     AuthModule,
-    MessageModule,
     UploadsModule,
     ScheduleModule,
     ChatModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

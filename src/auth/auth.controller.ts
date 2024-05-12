@@ -10,16 +10,12 @@ import { AuthService } from './auth.service';
 import { CreateuserDto } from './dtos/create-user.dto';
 import { SignInDto } from './dtos/sign-in.dto';
 import { KakaoLoginDto } from './dtos/kakao-user.dto';
-import { MessageService } from 'src/message/message.service';
 import { googleLoginDto } from './dtos/google-user.dto';
 import { JwtAuthGuard } from './guard/jwt-auth.guards';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly messageService: MessageService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
   async signUp(@Body() createuserDto: CreateuserDto) {

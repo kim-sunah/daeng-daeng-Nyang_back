@@ -17,6 +17,7 @@ export class Chat {
 
   @Column('int', { unsigned: true })
   roomId: number;
+
   @Column('int', { unsigned: true })
   fromId: number;
 

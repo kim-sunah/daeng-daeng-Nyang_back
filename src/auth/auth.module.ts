@@ -10,14 +10,11 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from './guard/jwt-auth.guards';
-import { MessageModule } from 'src/message/message.module';
-import { MessageService } from 'src/message/message.service';
 import { EventsModule } from 'src/events/events.module';
-import { Message } from 'src/message/entities/message.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Message]), // MessageRepository 추가
+    TypeOrmModule.forFeature([User]), // MessageRepository 추가
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
@@ -45,11 +42,10 @@ import { Message } from 'src/message/entities/message.entity';
         },
       },
     }),
-    EventsModule, 
-
+    EventsModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard, MessageService],
+  providers: [AuthService, JwtAuthGuard],
   exports: [AuthService],
 })
 export class AuthModule {}

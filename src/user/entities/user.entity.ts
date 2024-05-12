@@ -13,7 +13,6 @@ import {
 import { Pet } from '../../pet/entities/pet.entity';
 import { Role } from '../types/userRole.type';
 import { Post } from 'src/post/entities/post.entity';
-import { Message } from 'src/message/entities/message.entity';
 import { Schedule } from '../../schedule/entities/schedule.entity';
 
 @Index('email', ['email'], { unique: true })
@@ -57,10 +56,4 @@ export class User {
 
   @OneToMany(() => Schedule, (schedule) => schedule.user)
   schedule: Schedule[];
-
-  @OneToMany(() => Message, (message) => message.host)
-  host_message: Relation<Message>[];
-
-  @OneToMany(() => Message, (message) => message.gest)
-  gest_message: Relation<Message>[];
 }

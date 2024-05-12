@@ -1,9 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { REQUEST } from '@nestjs/core';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Injectable()
 export class ChatService {
@@ -12,6 +14,8 @@ export class ChatService {
     private ChatRepository: Repository<Chat>,
     @InjectRepository(User)
     private UserRepository: Repository<User>,
+    @Inject(REQUEST) private readonly req: Request,
+    private readonly event: EventsGateway,
   ) {}
 
   async myChatList(userId: number) {
@@ -28,7 +32,9 @@ export class ChatService {
   }
 
   async create(createChatDto: CreateChatDto, userId: number) {
-    const isChat = await this.ChatRepository.find({
+    this.event.newMessage('newMessage');
+
+    const isChat = await this.ChatRepository.findOne({
       where: [
         { fromId: userId, toId: createChatDto.toId },
         { fromId: createChatDto.toId, toId: userId },
@@ -37,11 +43,22 @@ export class ChatService {
 
     if (isChat) {
       //채팅 내역이 있을때
-      return;
+      return this.ChatRepository.create({
+        roomId: isChat.roomId,
+        fromId: userId,
+        toId: createChatDto.toId,
+        message: createChatDto.message,
+      });
     } else {
       //채팅 내역이 없을때
+      const newChat = this.ChatRepository.create({
+        roomId: null,
+        fromId: userId,
+        toId: createChatDto.toId,
+        message: createChatDto.message,
+      });
+      return this.ChatRepository.update(newChat, { roomId: newChat.id });
     }
-    return 'This action adds a new chat';
   }
 
   findOne(id: number) {

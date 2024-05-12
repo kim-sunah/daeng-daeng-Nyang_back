@@ -18,7 +18,6 @@ import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 import { KakaoLoginDto } from './dtos/kakao-user.dto';
-import { MessageService } from '../message/message.service';
 
 @Injectable()
 export class AuthService {
@@ -26,12 +25,10 @@ export class AuthService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
-    private readonly messageService: MessageService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
   async signUp({ email, password, name }: CreateuserDto) {
-   
     try {
       const existedUser = await this.userRepository.findOne({
         where: { email: email },
@@ -42,9 +39,14 @@ export class AuthService {
           `This Email is already in ${existedUser.registration_information} use`,
         ]);
       }
-      
+
       const hashedPassword = await bcrypt.hashSync(password, 12);
-      const user = this.userRepository.create({email: email,password: hashedPassword,registration_information: 'SITE',name});
+      const user = this.userRepository.create({
+        email: email,
+        password: hashedPassword,
+        registration_information: 'SITE',
+        name,
+      });
 
       return this.createUser(user);
     } catch (error) {
@@ -224,12 +226,10 @@ export class AuthService {
 
   async verifyAccessToken(access_token: string) {
     try {
-   
       const payload = await this.jwtService.verify(access_token);
 
       return { success: true, id: payload.id };
-    } 
-    catch (error) {
+    } catch (error) {
       return { success: false, message: error.message };
     }
   }
