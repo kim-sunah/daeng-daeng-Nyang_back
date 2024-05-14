@@ -23,6 +23,7 @@ import { ConfigService } from '@nestjs/config';
 import { Upload } from 'src/uploads/entities/upload.entity';
 import { STATUS_CODES } from 'http';
 import { Postcategory } from './entities/postcategory.entitiy';
+import { date } from 'joi';
 
 @Injectable()
 export class PostService {
@@ -43,15 +44,10 @@ export class PostService {
     },
   });
 
-  async create(
-    files: Array<Express.Multer.File>,
-    title: string,
-    content: string,
-    tags: string[],
-    userId: number,
-  ) {
+  async create(files: Array<Express.Multer.File>, title: string, content: string, tags: string[], userId: number) {
     let isFirstFileProcessed = false;
-    let isSecondFileProcessed = false;
+    let test;
+    
     for (const file of files) {
       const ext = extname(file.originalname);
       const baseName = basename(file.originalname, ext);
@@ -61,9 +57,12 @@ export class PostService {
         thumbnail: 'https://sunah.s3.ap-northeast-2.amazonaws.com/' + filenames,
         title,
         content,
+        createdAt: new Date(), // 현재 날짜와 시간을 할당
       });
+   
       if (!isFirstFileProcessed) {
-        await this.postRepository.save(postsave);
+        test = await this.postRepository.save(postsave); 
+       
         if (postsave) {
           tags.map(
             async (item) =>
@@ -73,17 +72,17 @@ export class PostService {
               }),
           );
         }
-        await this.s3Client.send(
-          new PutObjectCommand({
+        await this.s3Client.send(new PutObjectCommand({
             Bucket: 'sunah',
             Key: filenames,
             Body: file.buffer,
           }),
         );
         isFirstFileProcessed = true;
-      } else if (!isSecondFileProcessed) {
+      } else {
+       
         const findpost = await this.postRepository.findOne({
-          where: { userId, title, content, createdAt: postsave.createdAt },
+          where: { userId, title, content, id:test.id },
         });
         await this.UploadRepository.save({
           postId: findpost.id,
@@ -97,14 +96,13 @@ export class PostService {
           }),
         );
       }
-      return {
-        postsave: postsave,
-        message: '게시물 작성 성공',
-        STATUS_CODES: 200,
-      };
     }
-    return { message: '게시물 등록에 실패하였습니다.', STATUS_CODES: 402 };
+    return {
+      message: '게시물 작성 성공',
+      STATUS_CODES: 200,
+    };
   }
+  
 
   async findAll(page: number) {
     try {

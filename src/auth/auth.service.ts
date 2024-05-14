@@ -216,7 +216,7 @@ export class AuthService {
   }
   async createAccessToken(id: number) {
     const payload = { id: id };
-    return await this.jwtService.signAsync(payload, { expiresIn: '5m' });
+    return await this.jwtService.signAsync(payload, { expiresIn: '15m' });
   }
 
   // refresh token 만료기간 2주
