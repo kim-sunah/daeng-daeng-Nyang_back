@@ -44,25 +44,32 @@ export class PostService {
     },
   });
 
-  async create(files: Array<Express.Multer.File>, title: string, content: string, tags: string[], userId: number) {
+  async create(
+    files: Array<Express.Multer.File>,
+    title: string,
+    content: string,
+    tags: string[],
+    userId: number,
+  ) {
     let isFirstFileProcessed = false;
     let test;
-    
+
     for (const file of files) {
       const ext = extname(file.originalname);
       const baseName = basename(file.originalname, ext);
       const filenames = `images/${baseName}-${Date.now()}${ext}`;
       const postsave = this.postRepository.create({
         userId,
-        thumbnail: 'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' + filenames,
+        thumbnail:
+          'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' + filenames,
         title,
         content,
         createdAt: new Date(), // 현재 날짜와 시간을 할당
       });
-   
+
       if (!isFirstFileProcessed) {
-        test = await this.postRepository.save(postsave); 
-       
+        test = await this.postRepository.save(postsave);
+
         if (postsave) {
           tags.map(
             async (item) =>
@@ -72,7 +79,8 @@ export class PostService {
               }),
           );
         }
-        await this.s3Client.send(new PutObjectCommand({
+        await this.s3Client.send(
+          new PutObjectCommand({
             Bucket: 'dengdengyangs3',
             Key: filenames,
             Body: file.buffer,
@@ -80,13 +88,14 @@ export class PostService {
         );
         isFirstFileProcessed = true;
       } else {
-       
         const findpost = await this.postRepository.findOne({
-          where: { userId, title, content, id:test.id },
+          where: { userId, title, content, id: test.id },
         });
         await this.UploadRepository.save({
           postId: findpost.id,
-          image: 'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' + filenames,
+          image:
+            'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' +
+            filenames,
         });
         await this.s3Client.send(
           new PutObjectCommand({
@@ -102,7 +111,6 @@ export class PostService {
       STATUS_CODES: 200,
     };
   }
-  
 
   async findAll(page: number) {
     try {
@@ -125,9 +133,6 @@ export class PostService {
           error: '예상치 못한 에러가 발생했습니다.',
         },
         HttpStatus.BAD_GATEWAY,
-        {
-          cause: error,
-        },
       );
     }
   }
@@ -168,7 +173,8 @@ export class PostService {
           await this.postRepository.update(id, {
             userId,
             thumbnail:
-              'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' + filenames,
+              'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' +
+              filenames,
             title,
             content,
           });
@@ -188,7 +194,9 @@ export class PostService {
         } else if (!isSecondFileProcessed) {
           await this.UploadRepository.save({
             postId: id,
-            image: 'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' + filenames,
+            image:
+              'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' +
+              filenames,
           });
           await this.s3Client.send(
             new PutObjectCommand({
