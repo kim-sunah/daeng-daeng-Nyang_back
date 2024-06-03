@@ -74,8 +74,8 @@ export class PetService {
     const filenames = `images/${baseName}-${Date.now()}${ext}`
 
     try {
-      await this.s3Client.send(new PutObjectCommand({ Bucket: "sunah", Key: filenames, Body: file }))
-      await this.petRepository.save({ userId, profileImage: "https://sunah.s3.ap-northeast-2.amazonaws.com/" + filenames, name, age, breed, birth, gender })
+      await this.s3Client.send(new PutObjectCommand({ Bucket: "dengdengyangs3", Key: filenames, Body: file }))
+      await this.petRepository.save({ userId, profileImage: "https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/" + filenames, name, age, breed, birth, gender })
       return { message: "등록에 성공하였습니다" }
     }
     catch (err) {
@@ -105,8 +105,8 @@ export class PetService {
     const filenames = `images/${baseName}-${Date.now()}${ext}`
     const pet = await this.petRepository.findOne({ where: { id } });
     if (pet.userId === userId) {
-      await this.s3Client.send(new PutObjectCommand({ Bucket: "sunah", Key: filenames, Body: file }))
-      await this.petRepository.update({ id, userId }, { userId, profileImage: "https://sunah.s3.ap-northeast-2.amazonaws.com/" + filenames, name, age, breed, birth, gender })
+      await this.s3Client.send(new PutObjectCommand({ Bucket: "dengdengyangs3", Key: filenames, Body: file }))
+      await this.petRepository.update({ id, userId }, { userId, profileImage: "https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/" + filenames, name, age, breed, birth, gender })
       return { message: "수정에 성공하였습니다" }
 
     }

@@ -54,7 +54,7 @@ export class PostService {
       const filenames = `images/${baseName}-${Date.now()}${ext}`;
       const postsave = this.postRepository.create({
         userId,
-        thumbnail: 'https://sunah.s3.ap-northeast-2.amazonaws.com/' + filenames,
+        thumbnail: 'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' + filenames,
         title,
         content,
         createdAt: new Date(), // 현재 날짜와 시간을 할당
@@ -73,7 +73,7 @@ export class PostService {
           );
         }
         await this.s3Client.send(new PutObjectCommand({
-            Bucket: 'sunah',
+            Bucket: 'dengdengyangs3',
             Key: filenames,
             Body: file.buffer,
           }),
@@ -86,11 +86,11 @@ export class PostService {
         });
         await this.UploadRepository.save({
           postId: findpost.id,
-          image: 'https://sunah.s3.ap-northeast-2.amazonaws.com/' + filenames,
+          image: 'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' + filenames,
         });
         await this.s3Client.send(
           new PutObjectCommand({
-            Bucket: 'sunah',
+            Bucket: 'dengdengyangs3',
             Key: filenames,
             Body: file.buffer,
           }),
@@ -168,7 +168,7 @@ export class PostService {
           await this.postRepository.update(id, {
             userId,
             thumbnail:
-              'https://sunah.s3.ap-northeast-2.amazonaws.com/' + filenames,
+              'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' + filenames,
             title,
             content,
           });
@@ -188,11 +188,11 @@ export class PostService {
         } else if (!isSecondFileProcessed) {
           await this.UploadRepository.save({
             postId: id,
-            image: 'https://sunah.s3.ap-northeast-2.amazonaws.com/' + filenames,
+            image: 'https://dengdengyangs3.s3.ap-northeast-2.amazonaws.com/' + filenames,
           });
           await this.s3Client.send(
             new PutObjectCommand({
-              Bucket: 'sunah',
+              Bucket: 'dengdengyangs3',
               Key: filenames,
               Body: file.buffer,
             }),
